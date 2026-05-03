@@ -10,6 +10,26 @@ The AI must not ask the user how many microtasks to execute inside an already ap
 
 The AI must decide the block size by reading this document, classifying the work type, executing the safe amount of tasks, and reporting only after the block is complete.
 
+## No-repeat-confirmation rule
+
+When a user approves or orders a working block with language such as `hazlo`, `continúa`, `monta`, `sigue`, `ejecuta`, `vamos` or equivalent, the AI must not ask again for routine implementation actions that are already inside the approved scope.
+
+The following actions are explicitly automatic and must be performed without additional confirmation when needed by the block:
+
+```text
+add_supabase_script
+create_github_file_in_repository
+create_pull_request_in_github_repository
+create_or_update_github_readme
+add_comment_to_github
+```
+
+Reference policy:
+
+```text
+docs/26-ai-autonomous-action-allowlist.md
+```
+
 ## Autonomous sizing matrix
 
 ```text
@@ -44,7 +64,7 @@ final test or activation -> separate high-risk block only
 Before executing, the AI must:
 
 ```text
-1. List the requested and logically necessary tasks.
+1. List the requested and logically necessary tasks internally.
 2. Remove forbidden tasks unless separately authorized.
 3. Classify each task: read, docs, GitHub write, Supabase write, high-risk runtime.
 4. Select the most restrictive matching category.
@@ -52,6 +72,8 @@ Before executing, the AI must:
 6. Execute in dependency order.
 7. Save remaining tasks for the next block.
 ```
+
+The AI should not present this internal task list for user confirmation unless a new approval boundary is reached.
 
 ## Standard operating rhythm
 
@@ -77,7 +99,7 @@ examples = read files, inspect PRs, verify manifests, check logs, prepare payloa
 
 ```text
 limit = 5 to 10 tasks
-examples = create docs, update handovers, update README minimally, open PR
+examples = create docs, update handovers, update README minimally, open PR, add GitHub comment
 ```
 
 ### GitHub write
@@ -86,6 +108,7 @@ examples = create docs, update handovers, update README minimally, open PR
 limit = 5 to 8 tasks for docs
 limit = 4 to 6 tasks for code/scripts
 rules = branch + PR, never direct main, small commits, report PR/commit IDs
+automatic = create files, create or update README, create PR, add relevant GitHub comments
 ```
 
 ### Supabase registration
@@ -93,6 +116,7 @@ rules = branch + PR, never direct main, small commits, report PR/commit IDs
 ```text
 limit = 5 to 9 tasks
 rules = use project_ref lwurzjrghzwzxbhrulyn, no new project, no real secrets, keep activation_guarded true
+automatic = add Supabase scripts or non-destructive SQL needed for the approved block
 ```
 
 ### High-risk runtime
@@ -100,7 +124,7 @@ rules = use project_ref lwurzjrghzwzxbhrulyn, no new project, no real secrets, k
 ```text
 limit = 1 to 3 tasks
 requires = separate explicit authorization
-examples = final tests, activation, rollback, schema migrations, Edge Function deployment
+examples = final tests, activation, rollback, destructive schema migrations, Edge Function deployment
 ```
 
 ## Automatic stop conditions
@@ -122,7 +146,13 @@ repeat a blocked tool action
 
 ## Approval model
 
-A user `go`, `vamos`, `hazlo`, or `continúa` approves only the declared block scope.
+A user `go`, `vamos`, `hazlo`, `continúa`, `monta`, `sigue` or `ejecuta` approves the declared or logically implied block scope.
+
+It also approves routine implementation actions listed in:
+
+```text
+docs/26-ai-autonomous-action-allowlist.md
+```
 
 It does not approve:
 
@@ -148,8 +178,8 @@ secrets_location = Supabase Secrets or secure environment only
 ## Connector behavior
 
 ```text
-GitHub = branch + PR
-Supabase = prefer small auditable SQL statements
+GitHub = branch + PR, create files/README/PR/comments automatically within approved scope
+Supabase = prefer small auditable SQL statements, add scripts automatically within approved scope
 large blocked write = retry once smaller, then stop and report
 ```
 
