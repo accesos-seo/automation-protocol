@@ -1,0 +1,21 @@
+{
+  "automation_key": "automation-template",
+  "runtime_bucket": "skills",
+  "packages": [
+    {
+      "skill_key": "intake-analysis",
+      "skill_source_path": "automations/automation-template/skills/intake-analysis/SKILL.md",
+      "version": "0.1.0",
+      "runtime_package_path": "automation-template/intake-analysis/0.1.0/skill.zip",
+      "storage_object_present": false
+    },
+    {
+      "skill_key": "requirements-validation",
+      "skill_source_path": "automations/automation-template/skills/requirements-validation/SKILL.md",
+      "version": "0.1.0",
+      "runtime_package_path": "automation-template/requirements-validation/0.1.0/skill.zip",
+      "storage_object_present": false
+    }
+  ],
+  "next_step": "generate skill.zip packages and upload to Supabase Storage bucket skills when storage write is authorized"
+}

@@ -1,0 +1,2 @@
+680d6269662f286b1007295714041204d699119a14d4458af9840a0ff3ec54c6  automation-template/intake-analysis/0.1.0/skill.zip
+031ca689a93b6f8f88a79b37237f7b84bbe13b439523c818ed394c647de51488  automation-template/requirements-validation/0.1.0/skill.zip

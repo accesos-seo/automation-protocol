@@ -1,0 +1,29 @@
+{
+  "generated_at_utc": "2026-05-03T20:30:00Z",
+  "runtime_bucket": "skills",
+  "storage_upload_executed": false,
+  "packages": [
+    {
+      "automation_key": "automation-template",
+      "skill_key": "intake-analysis",
+      "version": "0.1.0",
+      "source_path": "automations/automation-template/skills/intake-analysis/SKILL.md",
+      "runtime_bucket": "skills",
+      "runtime_package_path": "automation-template/intake-analysis/0.1.0/skill.zip",
+      "zip_file": "skill.zip",
+      "sha256": "680d6269662f286b1007295714041204d699119a14d4458af9840a0ff3ec54c6",
+      "size_bytes": 711
+    },
+    {
+      "automation_key": "automation-template",
+      "skill_key": "requirements-validation",
+      "version": "0.1.0",
+      "source_path": "automations/automation-template/skills/requirements-validation/SKILL.md",
+      "runtime_bucket": "skills",
+      "runtime_package_path": "automation-template/requirements-validation/0.1.0/skill.zip",
+      "zip_file": "skill.zip",
+      "sha256": "031ca689a93b6f8f88a79b37237f7b84bbe13b439523c818ed394c647de51488",
+      "size_bytes": 719
+    }
+  ]
+}
