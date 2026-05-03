@@ -19,7 +19,8 @@ handover_generator = built
 verification_sql_script = built
 handover_checklist = built
 ai_handover = built
-example_shared_automation = built
+block_execution_procedure = built
+example_shared_automation = registered_pending_final_validation
 ```
 
 ## Lectura rápida
@@ -31,6 +32,7 @@ README.md
 docs/01-ai-context-router.md
 docs/00-index.md
 docs/24-ai-handover-next-steps.md
+docs/25-ai-block-execution-procedure.md
 docs/18-shared-automation-build-pipeline.md
 docs/19-shared-automation-operational-flow.md
 docs/20-shared-automation-powershell-operator-guide.md
@@ -43,12 +45,13 @@ Leer en este orden:
 ```text
 1. docs/01-ai-context-router.md
 2. docs/24-ai-handover-next-steps.md
-3. docs/18-shared-automation-build-pipeline.md
-4. docs/19-shared-automation-operational-flow.md
-5. docs/20-shared-automation-powershell-operator-guide.md
-6. docs/23-shared-automation-handover-checklist.md
-7. automations/_template/README.md
-8. handover/_template-AUTOMATION-HANDOVER.md
+3. docs/25-ai-block-execution-procedure.md
+4. docs/18-shared-automation-build-pipeline.md
+5. docs/19-shared-automation-operational-flow.md
+6. docs/20-shared-automation-powershell-operator-guide.md
+7. docs/23-shared-automation-handover-checklist.md
+8. automations/_template/README.md
+9. handover/_template-AUTOMATION-HANDOVER.md
 ```
 
 Scripts asociados:
@@ -155,6 +158,14 @@ docs/24-ai-handover-next-steps.md
 
 Define instrucciones para una nueva IA, estado actual, rutas de contexto y próximos pasos.
 
+### 25 - AI Block Execution Procedure
+
+```text
+docs/25-ai-block-execution-procedure.md
+```
+
+Define cómo ejecutar bloques de 5 a 9 tareas sin detenerse en cada microtarea, manteniendo controles de seguridad.
+
 ## Funciones Edge del pipeline compartido
 
 ```text
@@ -193,6 +204,7 @@ automations/example-shared-automation/README.md
 automations/example-shared-automation/deployment/manifest.json
 handover/_template-AUTOMATION-HANDOVER.md
 handover/example-shared-automation-HANDOVER.md
+handover/NEXT_AI_SESSION_BLOCK_HANDOVER.md
 examples/shared-automation/example-manifest.json
 ```
 
@@ -206,6 +218,18 @@ rama preferida bloqueada = feature/shared-automation-handover
 rama alternativa usada = ai-shared-automation-handover
 PR final mergeado = #6
 resultado script handover = New-SharedAutomationHandover.ps1 aplicado correctamente con escritura segura reducida
+```
+
+## Registro Supabase actual
+
+```text
+automation_key = example-shared-automation
+automation_id = e4b53127-2a30-489b-8253-4d1a659f68c0
+status = pending_final_validation
+health_status = pending_final_validation
+activation_guarded = true
+final_tests = not_executed
+activation = not_executed
 ```
 
 ## Estados de automatización compartida
@@ -280,7 +304,8 @@ nunca tablas públicas
 Continuar con:
 
 ```text
-validar documentación y manifest sin ejecutar pruebas finales
-preparar registro de ejemplo solo cuando el usuario lo autorice
+sincronizar handover/example-shared-automation-HANDOVER.md con IDs Supabase reales
+generar verificación SQL no destructiva
+preparar paquete de final validation sin ejecutar pruebas finales
 mantener final tests diferidos
 ```
