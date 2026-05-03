@@ -20,6 +20,7 @@ verification_sql_script = built
 handover_checklist = built
 ai_handover = built
 block_execution_procedure = built
+autonomous_action_allowlist = built
 example_shared_automation = registered_pending_final_validation
 ```
 
@@ -33,10 +34,33 @@ docs/01-ai-context-router.md
 docs/00-index.md
 docs/24-ai-handover-next-steps.md
 docs/25-ai-block-execution-procedure.md
+docs/26-ai-autonomous-action-allowlist.md
 docs/18-shared-automation-build-pipeline.md
 docs/19-shared-automation-operational-flow.md
 docs/20-shared-automation-powershell-operator-guide.md
 ```
+
+## Política de autonomía IA
+
+Antes de ejecutar bloques operativos, la IA debe atender:
+
+```text
+docs/25-ai-block-execution-procedure.md
+docs/26-ai-autonomous-action-allowlist.md
+docs/01-ai-context-router-autonomy-addendum.md
+```
+
+Acciones automáticas dentro de un bloque aprobado:
+
+```text
+add_supabase_script
+create_github_file_in_repository
+create_pull_request_in_github_repository
+create_or_update_github_readme
+add_comment_to_github
+```
+
+Estas acciones no requieren nueva pregunta al usuario cuando son necesarias para cumplir el bloque aprobado. La IA debe ejecutarlas, registrar evidencia y reportar al cierre del bloque.
 
 ## Ruta oficial para crear una nueva automatización compartida
 
@@ -44,14 +68,15 @@ Leer en este orden:
 
 ```text
 1. docs/01-ai-context-router.md
-2. docs/24-ai-handover-next-steps.md
-3. docs/25-ai-block-execution-procedure.md
-4. docs/18-shared-automation-build-pipeline.md
-5. docs/19-shared-automation-operational-flow.md
-6. docs/20-shared-automation-powershell-operator-guide.md
-7. docs/23-shared-automation-handover-checklist.md
-8. automations/_template/README.md
-9. handover/_template-AUTOMATION-HANDOVER.md
+2. docs/25-ai-block-execution-procedure.md
+3. docs/26-ai-autonomous-action-allowlist.md
+4. docs/24-ai-handover-next-steps.md
+5. docs/18-shared-automation-build-pipeline.md
+6. docs/19-shared-automation-operational-flow.md
+7. docs/20-shared-automation-powershell-operator-guide.md
+8. docs/23-shared-automation-handover-checklist.md
+9. automations/_template/README.md
+10. handover/_templates/AUTOMATION-HANDOVER.md
 ```
 
 Scripts asociados:
@@ -164,7 +189,15 @@ Define instrucciones para una nueva IA, estado actual, rutas de contexto y próx
 docs/25-ai-block-execution-procedure.md
 ```
 
-Define cómo ejecutar bloques de 5 a 9 tareas sin detenerse en cada microtarea, manteniendo controles de seguridad.
+Define cómo ejecutar bloques sin detenerse en cada microtarea, manteniendo controles de seguridad.
+
+### 26 - AI Autonomous Action Allowlist
+
+```text
+docs/26-ai-autonomous-action-allowlist.md
+```
+
+Define acciones automáticas que la IA debe ejecutar sin volver a preguntar dentro de un bloque aprobado.
 
 ## Funciones Edge del pipeline compartido
 
@@ -202,9 +235,10 @@ automations/_template/routing-rules/default-runtime-route.json
 automations/_template/deployment/manifest.json
 automations/example-shared-automation/README.md
 automations/example-shared-automation/deployment/manifest.json
-handover/_template-AUTOMATION-HANDOVER.md
-handover/example-shared-automation-HANDOVER.md
-handover/NEXT_AI_SESSION_BLOCK_HANDOVER.md
+handover/README.md
+handover/_templates/AUTOMATION-HANDOVER.md
+handover/automations/example-shared-automation-HANDOVER.md
+handover/ai-sessions/NEXT_AI_SESSION_BLOCK_HANDOVER.md
 examples/shared-automation/example-manifest.json
 ```
 
@@ -304,8 +338,8 @@ nunca tablas públicas
 Continuar con:
 
 ```text
-sincronizar handover/example-shared-automation-HANDOVER.md con IDs Supabase reales
-generar verificación SQL no destructiva
+verificación SQL no destructiva
 preparar paquete de final validation sin ejecutar pruebas finales
 mantener final tests diferidos
+mantener activation_guarded = true
 ```
