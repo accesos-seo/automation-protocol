@@ -11,14 +11,41 @@ Este documento evita que el estado quede disperso entre README, Supabase, script
 Cada automatización debe tener un handover propio:
 
 ```text
-handover/{automation_key}-HANDOVER.md
+handover/automations/{automation_key}-HANDOVER.md
 ```
 
 Ejemplo:
 
 ```text
-handover/cliente-area-proceso-HANDOVER.md
+handover/automations/cliente-area-proceso-HANDOVER.md
 ```
+
+La plantilla base vive en:
+
+```text
+handover/_templates/AUTOMATION-HANDOVER.md
+```
+
+## Política de autonomía para IA
+
+Antes de generar o actualizar handovers, la IA debe atender:
+
+```text
+docs/25-ai-block-execution-procedure.md
+docs/26-ai-autonomous-action-allowlist.md
+```
+
+Dentro de un bloque aprobado, la IA debe ejecutar sin nueva pregunta:
+
+```text
+create_github_file_in_repository
+create_pull_request_in_github_repository
+create_or_update_github_readme
+add_comment_to_github
+add_supabase_script
+```
+
+Estas acciones se documentan en el handover como evidencia al cerrar el bloque.
 
 ## Script recomendado
 
@@ -32,7 +59,11 @@ Generar el handover inicial con:
   -CommitSha "REPLACE_WITH_COMMIT_SHA"
 ```
 
-Nota operativa: en la sesión 2026-05-03, la rama preferida `feature/shared-automation-handover` fue bloqueada por controles del conector al intentar crearla. Se validó escritura mediante `test/ai-write-diagnostic` y luego se continuó con la rama alternativa `ai-shared-automation-handover`. El intento de crear el archivo `.ps1` completo también fue bloqueado por el conector; debe aplicarse desde una sesión/herramienta con escritura habilitada o mediante una estrategia de escritura dividida segura.
+El script escribe por defecto en:
+
+```text
+handover/automations/{automation_key}-HANDOVER.md
+```
 
 ## Regla principal
 
@@ -54,6 +85,7 @@ runtime = shared_supabase_runtime
 project_ref = lwurzjrghzwzxbhrulyn
 repository = accesos-seo/automation-protocol
 repository_path = automations/REPLACE_WITH_AUTOMATION_KEY
+handover_path = handover/automations/REPLACE_WITH_AUTOMATION_KEY-HANDOVER.md
 ```
 
 ## Estado esperado antes de pruebas finales
@@ -75,7 +107,7 @@ readme_path = automations/REPLACE_WITH_AUTOMATION_KEY/README.md
 agent_paths = automations/REPLACE_WITH_AUTOMATION_KEY/agents/
 skill_paths = automations/REPLACE_WITH_AUTOMATION_KEY/skills/
 routing_rules_path = automations/REPLACE_WITH_AUTOMATION_KEY/routing-rules/
-handover_path = handover/REPLACE_WITH_AUTOMATION_KEY-HANDOVER.md
+handover_path = handover/automations/REPLACE_WITH_AUTOMATION_KEY-HANDOVER.md
 ```
 
 ## Evidencia Supabase
