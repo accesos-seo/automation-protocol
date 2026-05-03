@@ -15,9 +15,11 @@ runtime_health = healthy
 shared_runtime = built
 final_tests_for_new_automations = deferred
 powershell_scripts = built
+handover_generator = pending_file_write
 verification_sql_script = built
 handover_checklist = built
 ai_handover = built
+example_shared_automation = built_in_branch
 ```
 
 ## Lectura rápida
@@ -54,6 +56,7 @@ Scripts asociados:
 ```text
 scripts/powershell/shared-automation/Invoke-SharedAutomationFunction.ps1
 scripts/powershell/shared-automation/New-SharedAutomationScaffold.ps1
+scripts/powershell/shared-automation/New-SharedAutomationHandover.ps1
 scripts/powershell/shared-automation/Register-SharedAutomationFromManifest.ps1
 scripts/powershell/shared-automation/Get-SharedAutomationVerificationSql.ps1
 ```
@@ -142,7 +145,7 @@ Define validación, activación controlada, monitoreo inicial y rollback a `paus
 docs/23-shared-automation-handover-checklist.md
 ```
 
-Define la evidencia mínima que debe quedar documentada por cada automatización.
+Define la evidencia mínima que debe quedar documentada por cada automatización y referencia el generador de handover.
 
 ### 24 - AI Handover and Next Steps
 
@@ -170,6 +173,7 @@ create-shared-automation-local-test
 ```text
 scripts/powershell/shared-automation/Invoke-SharedAutomationFunction.ps1
 scripts/powershell/shared-automation/New-SharedAutomationScaffold.ps1
+scripts/powershell/shared-automation/New-SharedAutomationHandover.ps1
 scripts/powershell/shared-automation/Register-SharedAutomationFromManifest.ps1
 scripts/powershell/shared-automation/Get-SharedAutomationVerificationSql.ps1
 scripts/powershell/shared-automation/Invoke-SharedAutomationFinalTests.ps1
@@ -185,8 +189,22 @@ automations/_template/agents/orchestrator.md
 automations/_template/skills/intake-analysis/SKILL.md
 automations/_template/routing-rules/default-runtime-route.json
 automations/_template/deployment/manifest.json
+automations/example-shared-automation/README.md
+automations/example-shared-automation/deployment/manifest.json
 handover/_template-AUTOMATION-HANDOVER.md
+handover/example-shared-automation-HANDOVER.md
 examples/shared-automation/example-manifest.json
+```
+
+## Diagnóstico de escritura GitHub
+
+```text
+branch diagnóstica = test/ai-write-diagnostic
+PR diagnóstica = #4 draft
+resultado = create_branch, create_file y create_pull_request OK
+rama preferida bloqueada = feature/shared-automation-handover
+rama alternativa usada = ai-shared-automation-handover
+pendiente = aplicar New-SharedAutomationHandover.ps1 si el conector vuelve a bloquear el archivo PowerShell completo
 ```
 
 ## Estados de automatización compartida
@@ -261,8 +279,8 @@ nunca tablas públicas
 Continuar con:
 
 ```text
-crear script PowerShell New-SharedAutomationHandover.ps1
+aplicar script PowerShell New-SharedAutomationHandover.ps1 si queda pendiente
 actualizar handover/_template-AUTOMATION-HANDOVER.md
-actualizar docs/23 con el nuevo script
-crear script para preparar carpeta automations/{automation_key} localmente
+abrir PR draft desde ai-shared-automation-handover
+mantener final tests diferidos
 ```
