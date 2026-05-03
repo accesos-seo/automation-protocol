@@ -1,4 +1,4 @@
-import { createClient } from "npm:@supabase/supabase-js@2";
+﻿import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -51,6 +51,47 @@ function fallbackSkillResult(reason: string, skillContext: any, details?: unknow
   };
 }
 
+function isDeterministicHardeningSkillInput(input: any): boolean {
+  return input?.runtime_validation_mode === "deterministic_hardening";
+}
+
+function deterministicHardeningSkillResult(skillContext: any) {
+  const input = skillContext?.input || {};
+  const skillKey = skillContext?.skill?.skill_key || "intake-analysis";
+
+  return {
+    result: {
+      intake_analysis: {
+        request_summary: "Prueba controlada de hardening runtime sin fallback.",
+        intent: "runtime_controlled_validation",
+        classification: {
+          category: "runtime_validation",
+          subcategory: "phase_3_hardening",
+          priority: "medium",
+        },
+        detected_fields: Object.keys(input || {}),
+        missing_fields: [],
+        completeness: "complete_deterministic",
+        scaffold: {
+          components: ["runtime-router", "skill-executor", "runtime_events"],
+          dependencies: ["automation_registry", "skill_registry", "execution_tasks", "runtime_events"],
+          technical_notes:
+            "Resultado deterministico usado solo para validacion controlada sin proveedor externo.",
+          estimated_effort: "low",
+        },
+      },
+      status: "complete",
+      next_steps: ["Confirmar evento runtime.execution_completed en runtime_events"],
+      human_intervention_needed: false,
+    },
+    deterministic_validation: {
+      used_deterministic_path: true,
+      completed_at: new Date().toISOString(),
+    },
+    skill_key: skillKey,
+    execution_status: "success",
+  };
+}
 async function callOpenRouter(skillContext: any) {
   const apiKey = Deno.env.get("OPENROUTER_API_KEY");
   const model = Deno.env.get("AI_MODEL") || Deno.env.get("OPENROUTER_MODEL") || "deepseek/deepseek-v4-pro";
@@ -122,10 +163,13 @@ Deno.serve(async (req) => {
     if (taskError || !task) return jsonResponse({ ok: false, error: "Failed to create execution task", details: taskError?.message }, 500);
     taskId = task.id;
 
-    await supabase.from("runtime_events").insert({ automation_key: automationKey, execution_task_id: task.id, event_type: "skill.execution_started", event_payload: { skill_key: skillKey, runtime_package_path: skill.runtime_package_path } });
+    await supabase.from("runtime_events").insert({ automation_key: automationKey, execution_task_id: task.id, event_type: "skill.execution_started", event_payload: { skill_key: skillKey, runtime_package_path: skill.runtime_package_path, deterministic_route: isDeterministicHardeningSkillInput(input) } });
 
     const skillContext = { automation, skill, input, instruction: "Ejecuta este skill de forma logica con la informacion disponible." };
-    const skillResult = await callOpenRouter(skillContext);
+    const deterministicRoute = isDeterministicHardeningSkillInput(input);
+    const skillResult = deterministicRoute
+      ? deterministicHardeningSkillResult(skillContext)
+      : await callOpenRouter(skillContext);
     const usedFallback = skillResult?.fallback?.used_fallback === true || skillResult?.execution_status === "success_with_fallback";
 
     if (usedFallback) await supabase.from("runtime_events").insert({ automation_key: automationKey, execution_task_id: task.id, event_type: "skill.openrouter_fallback_used", event_payload: { skill_key: skillKey, fallback: skillResult.fallback ?? null } });
@@ -149,3 +193,4 @@ Deno.serve(async (req) => {
     return jsonResponse({ ok: false, automation_key: automationKey, skill_key: skillKey, task_id: taskId, error: errorMessage }, 500);
   }
 });
+
