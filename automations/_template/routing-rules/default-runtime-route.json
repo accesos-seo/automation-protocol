@@ -1,0 +1,14 @@
+{
+  "rule_key": "default-runtime-route",
+  "rule_type": "runtime_routing",
+  "rule_version": "0.1.0",
+  "automation_key": "REPLACE_WITH_AUTOMATION_KEY",
+  "status": "active",
+  "rule_config": {
+    "runtime_router": "runtime-router",
+    "skill_executor": "skill-executor",
+    "default_skill_key": "intake-analysis",
+    "fallback_allowed": true,
+    "deterministic_validation_event_type": "runtime.hardening.validation"
+  }
+}
