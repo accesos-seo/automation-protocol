@@ -15,6 +15,7 @@ runtime_health = healthy
 shared_runtime = built
 final_tests_for_new_automations = deferred
 powershell_scripts = built
+verification_sql_script = built
 ```
 
 ## Lectura rápida
@@ -46,6 +47,7 @@ Scripts asociados:
 scripts/powershell/shared-automation/Invoke-SharedAutomationFunction.ps1
 scripts/powershell/shared-automation/New-SharedAutomationScaffold.ps1
 scripts/powershell/shared-automation/Register-SharedAutomationFromManifest.ps1
+scripts/powershell/shared-automation/Get-SharedAutomationVerificationSql.ps1
 ```
 
 ## Ruta de pruebas finales
@@ -64,6 +66,7 @@ Scripts asociados:
 scripts/powershell/shared-automation/Invoke-SharedAutomationFinalTests.ps1
 scripts/powershell/shared-automation/Enable-SharedAutomationControlledActivation.ps1
 scripts/powershell/shared-automation/Disable-SharedAutomation.ps1
+scripts/powershell/shared-automation/Get-SharedAutomationVerificationSql.ps1
 ```
 
 ## Documentos principales del runtime compartido
@@ -135,6 +138,7 @@ create-shared-automation-local-test
 scripts/powershell/shared-automation/Invoke-SharedAutomationFunction.ps1
 scripts/powershell/shared-automation/New-SharedAutomationScaffold.ps1
 scripts/powershell/shared-automation/Register-SharedAutomationFromManifest.ps1
+scripts/powershell/shared-automation/Get-SharedAutomationVerificationSql.ps1
 scripts/powershell/shared-automation/Invoke-SharedAutomationFinalTests.ps1
 scripts/powershell/shared-automation/Enable-SharedAutomationControlledActivation.ps1
 scripts/powershell/shared-automation/Disable-SharedAutomation.ps1
@@ -222,7 +226,7 @@ nunca tablas públicas
 Continuar con:
 
 ```text
-crear script de verificación SQL no destructiva
 crear ejemplo de automation manifest completo
 actualizar README con scripts oficiales
+crear checklist de handover por automatización
 ```
