@@ -88,7 +88,19 @@ Use this only when `dist\skills\packages` or any expected `skill.zip` is missing
 .\scripts\powershell\shared-automation\New-SkillPackagePlan.ps1 -AutomationKey "automation-template" -SkillKey "requirements-validation" -SkillSourcePath "automations\automation-template\skills\requirements-validation\SKILL.md" -Version "0.1.0" -OutputRoot "dist\skills\packages"
 ```
 
-Then confirm all five ZIPs exist and rerun dry-run. If dry-run reports SHA256 mismatch, stop and refresh package manifest/checksum files intentionally before upload.
+Then confirm all five ZIPs exist and rerun dry-run.
+
+## Handling SHA256 mismatch after regeneration
+
+A regenerated ZIP can differ from the committed manifest because ZIP metadata can change between package builds. The upload script must stop on mismatch.
+
+Observed example:
+
+```text
+SHA256 mismatch for _template/scaffold-validation/0.1.0/skill.zip
+```
+
+Do not upload with stale checksums. Refresh `dist/skills/package-manifest.json` and `dist/skills/SHA256SUMS.txt` from the local ZIPs, commit those checksum changes, then rerun dry-run. The new hashes become the upload authority for this run.
 
 ## Secure local upload script
 
