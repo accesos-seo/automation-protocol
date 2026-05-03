@@ -4,199 +4,127 @@
 
 Define how an AI agent should work in execution blocks without stopping after every small task, while preserving safety, traceability and user control.
 
-This procedure is intended for long operational sessions involving GitHub, Supabase and automation lifecycle tasks.
+## Core autonomy rule
 
-## Recommended block size
+The AI must not ask the user how many microtasks to execute inside an already approved operating phase.
 
-Default comfortable block:
+The AI must decide the block size by reading this document, classifying the work type, executing the safe amount of tasks, and reporting only after the block is complete.
 
-```text
-5 to 9 tasks per block
-```
-
-Maximum recommended block:
+## Autonomous sizing matrix
 
 ```text
-12 tasks per block
+pure_read_only = up to 12 tasks
+supabase_verification_read_only = up to 12 tasks
+mostly_read_with_light_documentation = 8 to 10 tasks
+documentation_only = 5 to 10 tasks
+github_write_docs_only = 5 to 8 tasks
+github_write_code_or_scripts = 4 to 6 tasks
+supabase_registration = 5 to 9 tasks
+mixed_github_and_supabase = 5 to 7 tasks
+high_risk_runtime = 1 to 3 tasks only
 ```
 
-Do not exceed 12 operational tasks in a single block unless the tasks are read-only or purely documentary.
+## Mixed work rule
 
-## Why this range
-
-A block of 5 to 9 tasks is large enough to avoid exhausting step-by-step approval fatigue, but small enough to keep:
-
-```text
-context clear
-state auditable
-errors isolated
-rollback possible
-security boundaries intact
-```
-
-## Block categories
-
-### Safe read-only block
-
-Can include up to 12 tasks.
+When a block contains different task types, use the most restrictive category.
 
 Examples:
 
 ```text
-read files
-inspect PRs
-verify manifests
-check logs
-prepare payloads
-summarize status
+12 read tasks -> allowed
+8 reads + 2 doc updates -> 8 to 10 tasks
+4 doc updates + PR + merge -> 5 to 8 tasks
+3 Supabase inserts + 3 verification queries -> 5 to 9 tasks
+3 GitHub writes + 3 Supabase writes -> 5 to 7 tasks
+final test or activation -> separate high-risk block only
 ```
 
-### Documentation block
+## Block planning algorithm
 
-Can include 5 to 10 tasks.
-
-Examples:
+Before executing, the AI must:
 
 ```text
-create docs
-update handovers
-update README minimally
-open PR
-merge PR after approval
+1. List the requested and logically necessary tasks.
+2. Remove forbidden tasks unless separately authorized.
+3. Classify each task: read, docs, GitHub write, Supabase write, high-risk runtime.
+4. Select the most restrictive matching category.
+5. Trim the block to the allowed range.
+6. Execute in dependency order.
+7. Save remaining tasks for the next block.
 ```
 
-### GitHub write block
-
-Can include 5 to 8 tasks.
-
-Examples:
+## Standard operating rhythm
 
 ```text
-create branch
-create files
-update docs
-open PR
-review diff
-merge PR if explicitly approved
+1. Determine task category from this document.
+2. Select block size automatically.
+3. Present the block only when a new approval boundary is needed.
+4. Execute the full approved block without stopping after each small task.
+5. Report outcome with evidence IDs.
+6. Present the next recommended block.
 ```
 
-Rules:
+## Category rules
+
+### Read-only
 
 ```text
-never write directly to main
-use branch + PR
-prefer small commits
-report final commit/PR IDs
+limit = up to 12 tasks
+examples = read files, inspect PRs, verify manifests, check logs, prepare payloads, summarize status
 ```
 
-### Supabase registration block
-
-Can include 5 to 9 tasks.
-
-Examples:
+### Documentation
 
 ```text
-verify project
-check existing records
-insert automation_registry
-insert agent_registry
-insert skill_registry
-insert deployment_configs
-insert automation_rules
-insert audit/runtime/task evidence
-verify counts
+limit = 5 to 10 tasks
+examples = create docs, update handovers, update README minimally, open PR
 ```
 
-Rules:
+### GitHub write
 
 ```text
-no new Supabase project
-use project_ref = lwurzjrghzwzxbhrulyn
-no real secrets in tables
-keep activation_guarded = true
-stop before final tests
-stop before activation
+limit = 5 to 8 tasks for docs
+limit = 4 to 6 tasks for code/scripts
+rules = branch + PR, never direct main, small commits, report PR/commit IDs
 ```
 
-### High-risk runtime block
-
-Requires separate explicit authorization and should be smaller: 1 to 3 tasks.
-
-Examples:
+### Supabase registration
 
 ```text
-final runtime tests
-controlled activation
-disable or pause automation
-rollback
-schema migrations
-Edge Function deployment
+limit = 5 to 9 tasks
+rules = use project_ref lwurzjrghzwzxbhrulyn, no new project, no real secrets, keep activation_guarded true
 ```
 
-## Standard block protocol
-
-Before executing a block, the AI should state:
+### High-risk runtime
 
 ```text
-block_goal
-scope
-allowed systems
-forbidden actions
-expected outputs
-```
-
-During execution, the AI should:
-
-```text
-execute tasks sequentially
-continue after successful tasks
-use small safe operations when tools block larger operations
-not stop for every successful step
-stop only on safety boundary, missing permission, destructive risk or unclear authorization
-```
-
-After execution, the AI should report:
-
-```text
-tasks completed
-records/files changed
-IDs created
-state reached
-errors or tool limitations
-next recommended block
+limit = 1 to 3 tasks
+requires = separate explicit authorization
+examples = final tests, activation, rollback, schema migrations, Edge Function deployment
 ```
 
 ## Automatic stop conditions
 
-The AI must stop and report before continuing if any of the following occur:
+Stop and report if an action would:
 
 ```text
-action would expose or store a real secret
-action would execute final tests without explicit authorization
-action would activate automation without explicit authorization
-action would set activation_guarded = false
-action would create a new Supabase project
-action would write directly to main
-action would delete records or code
-action would modify production runtime outside the requested block
-action requires credentials the user has not approved in the platform UI
-tool safety controls block repeated attempts
+store or expose a real secret
+execute final tests without explicit authorization
+activate automation without explicit authorization
+set activation_guarded = false
+create a new Supabase project
+write directly to main
+delete records or code
+modify production runtime outside scope
+require unapproved platform permission
+repeat a blocked tool action
 ```
 
 ## Approval model
 
-The user can approve a whole block with:
+A user `go`, `vamos`, `hazlo`, or `continúa` approves only the declared block scope.
 
-```text
-go
-vamos
-hazlo
-continúa
-```
-
-That approval applies only to the declared block scope.
-
-It does not imply permission for:
+It does not approve:
 
 ```text
 final tests
@@ -207,19 +135,7 @@ direct main writes
 destructive changes
 ```
 
-## Recommended operating rhythm
-
-Use this cycle:
-
-```text
-1. Present next block of 5 to 9 tasks.
-2. Wait for user go.
-3. Execute the full block without stopping after each small task.
-4. Report outcome with evidence IDs.
-5. Present next block.
-```
-
-## Current project safety defaults
+## Current project defaults
 
 ```text
 shared_supabase_project_ref = lwurzjrghzwzxbhrulyn
@@ -229,28 +145,20 @@ controlled_activation = not_authorized
 secrets_location = Supabase Secrets or secure environment only
 ```
 
-## Current known connector behavior
-
-GitHub writes should use:
+## Connector behavior
 
 ```text
-branch + PR
+GitHub = branch + PR
+Supabase = prefer small auditable SQL statements
+large blocked write = retry once smaller, then stop and report
 ```
-
-Avoid direct writes to `main`.
-
-If a large write is blocked, retry once with a smaller safe write. If it still fails, stop and report the exact blocked operation.
-
-Supabase SQL should prefer small, auditable statements over large transactions when connector filters block large payloads.
 
 ## Success definition
 
-A block is successful when:
-
 ```text
 all allowed tasks completed
-state is verified
+state verified
 no forbidden action occurred
-handover or documentation is updated when needed
-next block is clear
+handover/docs updated when needed
+next block clear
 ```
