@@ -38,8 +38,6 @@ example-shared-automation is in main
 
 ## Supabase registration completed
 
-The example automation has been registered in the shared Supabase project.
-
 ```text
 automation_key = example-shared-automation
 automation_id = e4b53127-2a30-489b-8253-4d1a659f68c0
@@ -87,19 +85,27 @@ new_supabase_project_created = false
 
 `OPENROUTER_API_KEY` is only a secret reference in `deployment_configs`; no real secret value was stored.
 
-## Preferred block execution method
+## Autonomous block execution method
 
-Use blocks of:
+The next AI must read `docs/25-ai-block-execution-procedure.md` and decide block size autonomously.
 
-```text
-5 to 9 tasks
-```
+Do not ask the user how many microtasks to run inside an approved phase.
 
-Maximum comfortable block:
+Use this matrix:
 
 ```text
-12 tasks
+pure_read_only = up to 12 tasks
+supabase_verification_read_only = up to 12 tasks
+mostly_read_with_light_documentation = 8 to 10 tasks
+documentation_only = 5 to 10 tasks
+github_write_docs_only = 5 to 8 tasks
+github_write_code_or_scripts = 4 to 6 tasks
+supabase_registration = 5 to 9 tasks
+mixed_github_and_supabase = 5 to 7 tasks
+high_risk_runtime = 1 to 3 tasks only, separate authorization required
 ```
+
+When work is mixed, use the most restrictive category.
 
 Stop before:
 
@@ -118,30 +124,36 @@ Use small auditable SQL statements for Supabase if larger blocks are blocked by 
 
 ## Next recommended block
 
-Execute a documentation sync block:
+Execute a documentation sync block. This is `github_write_docs_only`, so use 5 to 8 tasks:
 
 ```text
-1. Create a branch for handover sync.
-2. Update handover/example-shared-automation-HANDOVER.md with Supabase IDs.
-3. Update docs/00-index.md if needed to reference docs/25-ai-block-execution-procedure.md.
-4. Update docs/01-ai-context-router.md if needed to route block-execution/handover tasks.
-5. Open PR.
-6. Merge PR after user approval.
+1. Review PR #8 status.
+2. Confirm changed files in PR #8.
+3. Merge PR #8 if mergeable.
+4. Verify docs/25-ai-block-execution-procedure.md in main.
+5. Verify handover/NEXT_AI_SESSION_BLOCK_HANDOVER.md in main.
+6. Create a new branch to sync example handover IDs.
+7. Update handover/example-shared-automation-HANDOVER.md with Supabase IDs.
+8. Open PR for handover sync.
 ```
 
 Do not run final tests or activation in that block.
 
 ## Block after that
 
-Prepare final validation package, but do not execute final tests:
+Prepare final validation package, but do not execute final tests. This is `supabase_verification_read_only` plus documentation, so use 8 to 10 tasks:
 
 ```text
 1. Generate verification SQL.
-2. Verify Supabase records.
-3. Check for stuck execution_tasks.
-4. Check runtime_events and audit_logs.
-5. Update handover with verification result.
-6. Ask user for separate authorization before final tests.
+2. Verify automation_registry.
+3. Verify agent_registry.
+4. Verify skill_registry.
+5. Verify deployment_configs without secret values.
+6. Verify automation_rules.
+7. Check runtime_events.
+8. Check execution_tasks.
+9. Check audit_logs.
+10. Update handover with verification result.
 ```
 
 ## Forbidden without explicit separate authorization
