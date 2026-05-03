@@ -1,0 +1,75 @@
+{
+  "automation_key": "example-shared-automation",
+  "automation_name": "Example Shared Automation",
+  "protocol_name": "Example Shared Automation Protocol",
+  "version": "0.1.0",
+  "repo_strategy": "monorepo",
+  "repository_path": "automations/example-shared-automation",
+  "runtime": {
+    "type": "shared_supabase_runtime",
+    "project_ref": "lwurzjrghzwzxbhrulyn",
+    "activation_guarded": true,
+    "final_tests_deferred": true
+  },
+  "agents": [
+    {
+      "agent_key": "orchestrator",
+      "agent_name": "Example Orchestrator Agent",
+      "agent_type": "orchestrator",
+      "definition_path": "automations/example-shared-automation/agents/orchestrator.md",
+      "runtime_function": "runtime-router",
+      "status": "draft",
+      "capabilities": [
+        "route_event",
+        "select_skill",
+        "guard_activation"
+      ],
+      "skills": [
+        "intake-analysis"
+      ],
+      "required_configs": [
+        "OPENROUTER_API_KEY"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "skill_key": "intake-analysis",
+      "skill_name": "Intake Analysis Skill",
+      "skill_source_path": "automations/example-shared-automation/skills/intake-analysis/SKILL.md",
+      "skill_version": "0.1.0",
+      "runtime_location": "github",
+      "runtime_bucket": "none",
+      "status": "draft",
+      "required_configs": [
+        "OPENROUTER_API_KEY"
+      ]
+    }
+  ],
+  "configs": [
+    {
+      "config_key": "OPENROUTER_API_KEY",
+      "config_type": "secret",
+      "is_required": true,
+      "is_secret": true,
+      "config_status": "managed_in_supabase_secrets",
+      "description": "Provider key stored only in Supabase Secrets or secure runtime environment. No value is stored in GitHub."
+    }
+  ],
+  "rules": [
+    {
+      "rule_key": "default-runtime-route",
+      "rule_type": "runtime_route",
+      "rule_version": "1.0.0",
+      "rule_source_path": "automations/example-shared-automation/routing-rules/default-runtime-route.json",
+      "status": "draft"
+    }
+  ],
+  "build_state": {
+    "status": "scaffolded",
+    "health_status": "pending_validation",
+    "activation_guarded": true,
+    "final_tests": "deferred",
+    "controlled_activation": "not_authorized"
+  }
+}
