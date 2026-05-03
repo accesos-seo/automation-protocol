@@ -1,8 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
 
-import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
 type RequestBody = {
   automation_key?: string;
   automation_name?: string;
@@ -44,7 +41,55 @@ function validateAutomationKey(value: string): string | null {
   return null;
 }
 
-serve(async (req) => {
+function restHeaders(serviceRoleKey: string, prefer?: string) {
+  const headers: Record<string, string> = {
+    apikey: serviceRoleKey,
+    authorization: `Bearer ${serviceRoleKey}`,
+    "Content-Type": "application/json",
+  };
+
+  if (prefer) headers.Prefer = prefer;
+  return headers;
+}
+
+async function restGet(baseUrl: string, serviceRoleKey: string, path: string) {
+  const response = await fetch(`${baseUrl}/rest/v1/${path}`, {
+    method: "GET",
+    headers: restHeaders(serviceRoleKey),
+  });
+
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : null;
+
+  if (!response.ok) {
+    throw new Error(typeof data?.message === "string" ? data.message : text);
+  }
+
+  return data;
+}
+
+async function restInsert(baseUrl: string, serviceRoleKey: string, table: string, payload: Record<string, unknown>) {
+  const response = await fetch(`${baseUrl}/rest/v1/${table}?select=*`, {
+    method: "POST",
+    headers: restHeaders(serviceRoleKey, "return=representation"),
+    body: JSON.stringify(payload),
+  });
+
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : null;
+
+  if (!response.ok) {
+    throw new Error(typeof data?.message === "string" ? data.message : text);
+  }
+
+  if (!Array.isArray(data) || data.length === 0) {
+    throw new Error(`Insert into ${table} did not return a row`);
+  }
+
+  return data[0];
+}
+
+Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -87,48 +132,36 @@ serve(async (req) => {
   const defaultSkillKey = body.default_skill_key?.trim() || "intake-analysis";
   const requestMetadata = body.metadata && typeof body.metadata === "object" ? body.metadata : {};
 
-  const supabase = createClient(supabaseUrl, serviceRoleKey, {
-    auth: { persistSession: false },
-  });
+  try {
+    const encodedAutomationKey = encodeURIComponent(automationKey);
+    const existing = await restGet(
+      supabaseUrl,
+      serviceRoleKey,
+      `automation_registry?select=id,automation_key,status,health_status,activation_guarded&automation_key=eq.${encodedAutomationKey}`,
+    );
 
-  const { data: existing, error: existingError } = await supabase
-    .from("automation_registry")
-    .select("id, automation_key, status, health_status, activation_guarded")
-    .eq("automation_key", automationKey)
-    .maybeSingle();
+    if (Array.isArray(existing) && existing.length > 0) {
+      return jsonResponse(409, {
+        ok: false,
+        error: "automation_key_already_exists",
+        automation: existing[0],
+      });
+    }
 
-  if (existingError) {
-    return jsonResponse(500, {
-      ok: false,
-      error: "automation_lookup_failed",
-      details: existingError.message,
-    });
-  }
+    const runtimeConfig = {
+      runtime: "shared_supabase_runtime",
+      runtime_router: "runtime-router",
+      skill_executor: "skill-executor",
+      project_ref: "lwurzjrghzwzxbhrulyn",
+    };
 
-  if (existing) {
-    return jsonResponse(409, {
-      ok: false,
-      error: "automation_key_already_exists",
-      automation: existing,
-    });
-  }
+    const metadata = {
+      ...requestMetadata,
+      created_by: "create-shared-automation",
+      source_status: "phase_3_runtime_hardening_validated",
+    };
 
-  const runtimeConfig = {
-    runtime: "shared_supabase_runtime",
-    runtime_router: "runtime-router",
-    skill_executor: "skill-executor",
-    project_ref: "lwurzjrghzwzxbhrulyn",
-  };
-
-  const metadata = {
-    ...requestMetadata,
-    created_by: "create-shared-automation",
-    source_status: "phase_3_runtime_hardening_validated",
-  };
-
-  const { data: automation, error: insertAutomationError } = await supabase
-    .from("automation_registry")
-    .insert({
+    const automation = await restInsert(supabaseUrl, serviceRoleKey, "automation_registry", {
       automation_key: automationKey,
       automation_name: automationName,
       protocol_name: protocolName,
@@ -141,21 +174,9 @@ serve(async (req) => {
       runtime_config: runtimeConfig,
       activation_guarded: true,
       metadata,
-    })
-    .select("id, automation_key, automation_name, status, health_status, activation_guarded")
-    .single();
-
-  if (insertAutomationError) {
-    return jsonResponse(500, {
-      ok: false,
-      error: "automation_insert_failed",
-      details: insertAutomationError.message,
     });
-  }
 
-  const { data: config, error: configError } = await supabase
-    .from("deployment_configs")
-    .insert({
+    const config = await restInsert(supabaseUrl, serviceRoleKey, "deployment_configs", {
       automation_key: automationKey,
       config_key: "OPENROUTER_API_KEY",
       config_type: "secret",
@@ -164,22 +185,9 @@ serve(async (req) => {
       config_status: "managed_in_supabase_secrets",
       description: "Secret used by Edge Functions. Real value must never be stored in GitHub or public tables.",
       metadata: { runtime: "shared" },
-    })
-    .select("id, automation_key, config_key, is_secret, config_status")
-    .single();
-
-  if (configError) {
-    return jsonResponse(500, {
-      ok: false,
-      error: "deployment_config_insert_failed",
-      automation,
-      details: configError.message,
     });
-  }
 
-  const { data: rule, error: ruleError } = await supabase
-    .from("automation_rules")
-    .insert({
+    const rule = await restInsert(supabaseUrl, serviceRoleKey, "automation_rules", {
       automation_key: automationKey,
       rule_key: "default-runtime-route",
       rule_type: "runtime_routing",
@@ -190,50 +198,46 @@ serve(async (req) => {
         default_skill_key: defaultSkillKey,
       },
       status: "active",
-    })
-    .select("id, automation_key, rule_key, status")
-    .single();
+    });
 
-  if (ruleError) {
+    let auditLog: Record<string, unknown> | { error: string };
+    try {
+      auditLog = await restInsert(supabaseUrl, serviceRoleKey, "audit_logs", {
+        entity_type: "automation_registry",
+        entity_id: automation.id,
+        action: "create_shared_automation",
+        actor_type: "edge_function",
+        new_value: {
+          automation,
+          config,
+          rule,
+        },
+        metadata: {
+          function: "create-shared-automation",
+        },
+      });
+    } catch (error) {
+      auditLog = { error: error instanceof Error ? error.message : "audit_log_failed" };
+    }
+
+    return jsonResponse(200, {
+      ok: true,
+      automation,
+      deployment_config: config,
+      automation_rule: rule,
+      audit_log: auditLog,
+      next_steps: [
+        "Create versioned files under automations/{automation_key}/",
+        "Register agents and skills if this automation needs custom routing",
+        "Run a controlled runtime test through runtime-router-local-test",
+        "Update automation_registry to validated only after runtime evidence exists",
+      ],
+    });
+  } catch (error) {
     return jsonResponse(500, {
       ok: false,
-      error: "automation_rule_insert_failed",
-      automation,
-      config,
-      details: ruleError.message,
+      error: "create_shared_automation_failed",
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   }
-
-  const { data: auditLog, error: auditError } = await supabase
-    .from("audit_logs")
-    .insert({
-      entity_type: "automation_registry",
-      entity_id: automation.id,
-      action: "create_shared_automation",
-      actor_type: "edge_function",
-      new_value: {
-        automation,
-        config,
-        rule,
-      },
-      metadata: {
-        function: "create-shared-automation",
-      },
-    })
-    .select("id, action, created_at")
-    .single();
-
-  return jsonResponse(200, {
-    ok: true,
-    automation,
-    deployment_config: config,
-    automation_rule: rule,
-    audit_log: auditError ? { error: auditError.message } : auditLog,
-    next_steps: [
-      "Create versioned files under automations/{automation_key}/",
-      "Register agents and skills if this automation needs custom routing",
-      "Run a controlled runtime test through runtime-router-local-test",
-      "Update automation_registry to validated only after runtime evidence exists",
-    ],
-  });
 });
