@@ -169,7 +169,7 @@ Deno.serve(async (req: Request) => {
       status: "scaffolded",
       health_status: "pending_validation",
       version: "0.1.0",
-      repository_url: "https://github.com/accesos-seo/automation-protocol",
+      repository_url: "github:accesos-seo/automation-protocol",
       repository_path: `automations/${automationKey}`,
       runtime_config: runtimeConfig,
       activation_guarded: true,
