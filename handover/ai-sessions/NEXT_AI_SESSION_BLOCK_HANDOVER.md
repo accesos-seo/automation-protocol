@@ -2,19 +2,7 @@
 
 ## Objetivo de este handover
 
-Este handover no es solo una descripción de estructura.
-
-Su objetivo es indicar a la siguiente sesión de IA:
-
-```text
-1. dónde está detenido el proyecto;
-2. qué ya fue completado;
-3. qué no debe repetirse;
-4. cuáles son los próximos bloques de trabajo;
-5. qué límites de seguridad siguen vigentes;
-6. cómo debe trabajar por bloques autónomos;
-7. qué idioma debe usar con el usuario.
-```
+Indicar a la siguiente sesión de IA dónde está detenido el proyecto, qué ya fue completado, qué no debe repetirse, cuáles son los próximos bloques, qué límites de seguridad siguen vigentes y cómo debe trabajar sin pedir confirmaciones repetitivas.
 
 ## Regla de idioma obligatoria
 
@@ -25,42 +13,62 @@ assistant_response_language = español
 technical_file_language = mantener idioma existente salvo instrucción contraria
 ```
 
-## Leer primero
+## Lectura obligatoria antes de ejecutar
+
+Antes de cualquier ejecución, leer o atender:
 
 ```text
 README.md
 docs/01-ai-context-router.md
 docs/00-index.md
 docs/25-ai-block-execution-procedure.md
+docs/26-ai-autonomous-action-allowlist.md
+docs/01-ai-context-router-autonomy-addendum.md
 handover/ai-sessions/NEXT_AI_SESSION_BLOCK_HANDOVER.md
 handover/automations/example-shared-automation-HANDOVER.md
 ```
 
-No cargar documentación de pruebas finales ni activación salvo autorización explícita del usuario.
+## Política de autonomía obligatoria
+
+La IA no debe preguntar por microacciones rutinarias si el usuario ya aprobó un bloque con `adelante`, `hazlo`, `continúa`, `monta`, `sigue`, `ejecuta`, `vamos` o equivalente.
+
+Acciones automáticas dentro del bloque aprobado:
+
+```text
+add_supabase_script
+create_github_file_in_repository
+create_pull_request_in_github_repository
+create_or_update_github_readme
+add_comment_to_github
+```
+
+La IA debe ejecutarlas, registrar evidencia y reportar al cierre del bloque.
 
 ## Repositorio actual
 
 ```text
 repository = accesos-seo/automation-protocol
 main_commit_sha = 43d16a2b0b04189cb3066e81811353ddb09c8187
+working_branch = ai/reorganize-handovers-autonomy-block
 shared_supabase_project_ref = lwurzjrghzwzxbhrulyn
 runtime = shared_supabase_runtime
 ```
 
-## Trabajo completado
+## Trabajo completado en la rama actual
 
 ```text
-PR #6 merged: shared automation handover generator and example
-PR #7 merged: post-merge documentation status cleanup
-PR #8 merged: AI block execution procedure and next-session handover
-PR #9 merged: Update next AI session handover instructions
-New-SharedAutomationHandover.ps1 is in main
-example-shared-automation is in main
+handover reorganizado en carpetas dedicadas
+docs/26-ai-autonomous-action-allowlist.md creado
+docs/25-ai-block-execution-procedure.md actualizado con regla no-repeat-confirmation
+docs/01-ai-context-router-autonomy-addendum.md creado
+docs/00-index.md actualizado con política de autonomía y rutas nuevas
+docs/23-shared-automation-handover-checklist.md actualizado con rutas nuevas
+New-SharedAutomationHandover.ps1 actualizado para generar en handover/automations/
+example-shared-automation-HANDOVER.md sincronizado con IDs Supabase reales
+PR #20 abierto
 ```
 
 ## Registro Supabase completado
-
-La automatización de ejemplo ya fue registrada en el proyecto Supabase compartido.
 
 ```text
 automation_key = example-shared-automation
@@ -69,19 +77,6 @@ status = pending_final_validation
 health_status = pending_final_validation
 activation_guarded = true
 commit_sha = 48c65a7576cf1e3de0a3d7b76a9271b9802eb1bb
-```
-
-Registros creados/verificados:
-
-```text
-automation_registry = 1
-agent_registry = 1
-skill_registry = 1
-deployment_configs = 1
-automation_rules = 1
-runtime_events = 1
-execution_tasks = 1
-audit_logs = 1
 ```
 
 IDs importantes:
@@ -96,20 +91,6 @@ runtime_event_id = ee6c74e3-82f1-4c65-a195-40f5208d1a46
 audit_log_id = c526e8f3-4652-491f-afb4-61d6f179624f
 ```
 
-## Punto exacto de detención
-
-El proyecto queda detenido aquí:
-
-```text
-example-shared-automation está registrada en Supabase
-estado = pending_final_validation
-handover de ejemplo sincronizado con IDs reales en la rama de reorganización
-estructura handover reorganizada en la rama de reorganización
-verificación SQL final aún no se ha ejecutado
-pruebas finales aún no se han ejecutado
-activación aún no se ha ejecutado
-```
-
 ## Estado de seguridad actual
 
 ```text
@@ -119,62 +100,13 @@ activation_guarded = true
 controlled_activation = not_authorized
 secrets_stored = false
 new_supabase_project_created = false
+direct_main_write = false
+destructive_changes = false
 ```
 
-`OPENROUTER_API_KEY` existe solo como referencia en `deployment_configs`; no se guardó ningún valor real.
+## Bloque siguiente recomendado
 
-## Método de trabajo obligatorio por bloques
-
-La siguiente IA debe leer `docs/25-ai-block-execution-procedure.md` y decidir el tamaño del bloque de forma autónoma.
-
-No debe preguntar al usuario cuántas microtareas ejecutar dentro de una fase aprobada.
-
-Matriz resumida:
-
-```text
-pure_read_only = up to 12 tasks
-supabase_verification_read_only = up to 12 tasks
-mostly_read_with_light_documentation = 8 to 10 tasks
-documentation_only = 5 to 10 tasks
-github_write_docs_only = 5 to 8 tasks
-github_write_code_or_scripts = 4 to 6 tasks
-supabase_registration = 5 to 9 tasks
-mixed_github_and_supabase = 5 to 7 tasks
-high_risk_runtime = 1 to 3 tasks only, separate authorization required
-```
-
-Cuando el trabajo sea mixto, usar la categoría más restrictiva.
-
-## Bloque siguiente recomendado: actualizar referencias
-
-Tipo de bloque:
-
-```text
-github_write_docs_only = 5 to 8 tasks
-```
-
-Tareas:
-
-```text
-1. Actualizar docs/00-index.md con las nuevas rutas handover.
-2. Actualizar docs/01-ai-context-router.md con las nuevas rutas handover.
-3. Actualizar docs/23-shared-automation-handover-checklist.md.
-4. Actualizar scripts/powershell/shared-automation/New-SharedAutomationHandover.ps1 para generar en handover/automations/.
-5. Actualizar README.md solo si hace falta y de forma corta.
-6. Abrir PR.
-7. Verificar PR.
-8. Mantener sin merge directo a main salvo autorización de plataforma/usuario.
-```
-
-## Bloque posterior recomendado: verificación no destructiva
-
-Tipo de bloque:
-
-```text
-supabase_verification_read_only = up to 12 tasks
-```
-
-Tareas:
+Ejecutar verificación no destructiva Supabase y documentar resultado:
 
 ```text
 1. Verificar automation_registry.
@@ -186,7 +118,8 @@ Tareas:
 7. Verificar execution_tasks.
 8. Verificar audit_logs.
 9. Verificar que no existan tasks stuck.
-10. Documentar resultado en handover.
+10. Documentar resultado en handover/automations/example-shared-automation-HANDOVER.md.
+11. Comentar evidencia en PR #20.
 ```
 
 ## Prohibido sin autorización separada explícita
@@ -201,14 +134,15 @@ crear proyecto Supabase nuevo
 guardar secretos reales
 borrar registros
 escribir directo a main
+migraciones destructivas
 ```
 
 ## Instrucción final para la siguiente IA
 
-Responder siempre en español al usuario.
-
-Trabajar por bloques autónomos según `docs/25-ai-block-execution-procedure.md`.
+Responder siempre en español.
 
 No detenerse por cada microtarea.
+
+No pedir permiso para las acciones automáticas listadas en `docs/26-ai-autonomous-action-allowlist.md`.
 
 Detenerse solo ante límites de seguridad, permisos de plataforma o autorización explícita faltante para pruebas finales/activación.
