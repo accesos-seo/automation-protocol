@@ -10,7 +10,24 @@ Repositorio monorepo para documentar, versionar y desplegar automatizaciones bas
 - license: proprietary / internal use
 - repo_strategy: monorepo
 - automation_key: automation-template
-- status: phase_3_ready_but_activation_guarded
+- status: phase_3_runtime_hardening_validated
+- runtime_state: active
+- runtime_health: healthy
+
+## Estado actual
+
+Phase 3 Runtime Hardening quedó validada y fusionada en `main`.
+
+Evidencia de cierre:
+
+```text
+PR #3 = merged
+merge_commit_sha = b589527f9294488c79bcb1382498eccb1bbf145a
+protocol.config.json = phase_3_runtime_hardening_validated
+completed_with_fallback = false
+deterministic_route = true
+final_event = runtime.execution_completed
+```
 
 ## Regla principal
 
