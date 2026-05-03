@@ -19,7 +19,7 @@ handover_generator = built
 verification_sql_script = built
 handover_checklist = built
 ai_handover = built
-example_shared_automation = built_in_branch
+example_shared_automation = built
 ```
 
 ## Lectura rápida
@@ -204,6 +204,7 @@ PR diagnóstica = #4 draft
 resultado = create_branch, create_file y create_pull_request OK
 rama preferida bloqueada = feature/shared-automation-handover
 rama alternativa usada = ai-shared-automation-handover
+PR final mergeado = #6
 resultado script handover = New-SharedAutomationHandover.ps1 aplicado correctamente con escritura segura reducida
 ```
 
@@ -279,7 +280,7 @@ nunca tablas públicas
 Continuar con:
 
 ```text
-revisar PR draft desde ai-shared-automation-handover
 validar documentación y manifest sin ejecutar pruebas finales
+preparar registro de ejemplo solo cuando el usuario lo autorice
 mantener final tests diferidos
 ```
