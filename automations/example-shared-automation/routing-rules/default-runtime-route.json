@@ -1,0 +1,18 @@
+{
+  "automation_key": "example-shared-automation",
+  "rule_key": "default-runtime-route",
+  "rule_type": "runtime_route",
+  "rule_version": "1.0.0",
+  "status": "draft",
+  "route": {
+    "entry_agent": "orchestrator",
+    "default_skill": "intake-analysis",
+    "runtime_function": "runtime-router",
+    "skill_executor_function": "skill-executor"
+  },
+  "guards": {
+    "activation_guarded": true,
+    "final_tests_deferred": true,
+    "controlled_activation_required": true
+  }
+}
