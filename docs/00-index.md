@@ -15,7 +15,7 @@ runtime_health = healthy
 shared_runtime = built
 final_tests_for_new_automations = deferred
 powershell_scripts = built
-handover_generator = pending_file_write
+handover_generator = built
 verification_sql_script = built
 handover_checklist = built
 ai_handover = built
@@ -204,7 +204,7 @@ PR diagnóstica = #4 draft
 resultado = create_branch, create_file y create_pull_request OK
 rama preferida bloqueada = feature/shared-automation-handover
 rama alternativa usada = ai-shared-automation-handover
-pendiente = aplicar New-SharedAutomationHandover.ps1 si el conector vuelve a bloquear el archivo PowerShell completo
+resultado script handover = New-SharedAutomationHandover.ps1 aplicado correctamente con escritura segura reducida
 ```
 
 ## Estados de automatización compartida
@@ -279,8 +279,7 @@ nunca tablas públicas
 Continuar con:
 
 ```text
-aplicar script PowerShell New-SharedAutomationHandover.ps1 si queda pendiente
-actualizar handover/_template-AUTOMATION-HANDOVER.md
-abrir PR draft desde ai-shared-automation-handover
+revisar PR draft desde ai-shared-automation-handover
+validar documentación y manifest sin ejecutar pruebas finales
 mantener final tests diferidos
 ```
