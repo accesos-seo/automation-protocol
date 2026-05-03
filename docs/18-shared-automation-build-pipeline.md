@@ -43,6 +43,39 @@ Responsabilidad:
 - No ejecutar pruebas.
 - No activar automatizaciones.
 
+### validate-shared-automation-manifest
+
+Estado:
+
+```text
+ACTIVE
+verify_jwt = true
+```
+
+Responsabilidad:
+
+- Validar estructura de `deployment/manifest.json`.
+- Validar componentes requeridos.
+- Detectar duplicados.
+- Aplicar política de secrets.
+- Confirmar que `activation_guarded` siga activo antes de pruebas finales.
+
+### build-components-payload-from-manifest
+
+Estado:
+
+```text
+ACTIVE
+verify_jwt = true
+```
+
+Responsabilidad:
+
+- Convertir `deployment/manifest.json` en payload operativo.
+- Normalizar agentes, skills, configs y reglas.
+- Bloquear configs secretas que incluyan campo `value`.
+- Generar payload listo para `register-shared-automation-components`.
+
 ### build-shared-automation-draft
 
 Estado:
@@ -98,6 +131,21 @@ Responsabilidad:
 - Registrar reglas.
 - Crear audit log.
 
+### update-shared-automation-build-state
+
+Estado:
+
+```text
+ACTIVE
+verify_jwt = true
+```
+
+Responsabilidad:
+
+- Mover estado de construcción con transiciones permitidas.
+- Mantener `activation_guarded = true` hasta validación final.
+- Registrar evidencia y auditoría.
+
 ### create-shared-automation-local-test
 
 Estado:
@@ -120,11 +168,14 @@ Responsabilidad:
 1. Definir automation_key
 2. Ejecutar generate-shared-automation-scaffold
 3. Crear archivos generados en GitHub
-4. Ejecutar build-shared-automation-draft o create-shared-automation
-5. Ejecutar register-shared-automation-components
-6. Mantener activation_guarded = true
-7. Ejecutar pruebas finales al cierre
-8. Activar solo con evidencia runtime
+4. Ejecutar validate-shared-automation-manifest
+5. Ejecutar build-components-payload-from-manifest
+6. Ejecutar build-shared-automation-draft o create-shared-automation
+7. Ejecutar register-shared-automation-components
+8. Ejecutar update-shared-automation-build-state hasta pending_final_validation
+9. Mantener activation_guarded = true
+10. Ejecutar pruebas finales al cierre
+11. Activar solo con evidencia runtime
 ```
 
 ## Estados operativos
@@ -150,6 +201,14 @@ activation_guarded = true
 ```text
 status = components_registered
 health_status = pending_validation
+activation_guarded = true
+```
+
+### Pendiente de validación final
+
+```text
+status = pending_final_validation
+health_status = pending_final_validation
 activation_guarded = true
 ```
 
@@ -194,9 +253,17 @@ docs/17-deferred-final-test-plan.md
 
 No se ejecutan altas reales, pruebas runtime ni activaciones hasta el cierre de construcción.
 
+## Estado de construcción
+
+```text
+static_manifest_validator = built_and_deployed
+component_payload_builder = built_and_deployed
+build_state_updater = built_and_deployed
+operational_flow_doc = built
+```
+
 ## Pendiente de construcción
 
-- Crear validador estático de manifests.
-- Crear función de actualización de estado post-scaffold.
-- Crear endpoint seguro para preparar payload de registro de componentes desde manifest.
-- Crear documentación final de uso operativo.
+- Crear documentación final de uso operativo con PowerShell.
+- Crear guía de cierre de pruebas finales.
+- Crear checklist de activación controlada.
