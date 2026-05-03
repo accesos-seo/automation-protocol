@@ -16,6 +16,7 @@ shared_runtime = built
 final_tests_for_new_automations = deferred
 powershell_scripts = built
 verification_sql_script = built
+handover_checklist = built
 ```
 
 ## Lectura rápida
@@ -24,6 +25,7 @@ Para entender el estado actual del sistema:
 
 ```text
 README.md
+docs/01-ai-context-router.md
 docs/18-shared-automation-build-pipeline.md
 docs/19-shared-automation-operational-flow.md
 docs/20-shared-automation-powershell-operator-guide.md
@@ -34,11 +36,13 @@ docs/20-shared-automation-powershell-operator-guide.md
 Leer en este orden:
 
 ```text
-1. docs/18-shared-automation-build-pipeline.md
-2. docs/19-shared-automation-operational-flow.md
-3. docs/20-shared-automation-powershell-operator-guide.md
-4. automations/_template/README.md
-5. handover/_template-AUTOMATION-HANDOVER.md
+1. docs/01-ai-context-router.md
+2. docs/18-shared-automation-build-pipeline.md
+3. docs/19-shared-automation-operational-flow.md
+4. docs/20-shared-automation-powershell-operator-guide.md
+5. docs/23-shared-automation-handover-checklist.md
+6. automations/_template/README.md
+7. handover/_template-AUTOMATION-HANDOVER.md
 ```
 
 Scripts asociados:
@@ -58,6 +62,7 @@ Leer solo cuando termine la construcción y se autorice el cierre de pruebas:
 1. docs/17-deferred-final-test-plan.md
 2. docs/21-shared-automation-final-test-closeout-guide.md
 3. docs/22-shared-automation-controlled-activation-checklist.md
+4. docs/23-shared-automation-handover-checklist.md
 ```
 
 Scripts asociados:
@@ -70,6 +75,14 @@ scripts/powershell/shared-automation/Get-SharedAutomationVerificationSql.ps1
 ```
 
 ## Documentos principales del runtime compartido
+
+### 01 - AI Context Router
+
+```text
+docs/01-ai-context-router.md
+```
+
+Define qué documentos mínimos debe cargar una IA según intención.
 
 ### 17 - Deferred Final Test Plan
 
@@ -119,6 +132,14 @@ docs/22-shared-automation-controlled-activation-checklist.md
 
 Define validación, activación controlada, monitoreo inicial y rollback a `paused`.
 
+### 23 - Shared Automation Handover Checklist
+
+```text
+docs/23-shared-automation-handover-checklist.md
+```
+
+Define la evidencia mínima que debe quedar documentada por cada automatización.
+
 ## Funciones Edge del pipeline compartido
 
 ```text
@@ -144,7 +165,7 @@ scripts/powershell/shared-automation/Enable-SharedAutomationControlledActivation
 scripts/powershell/shared-automation/Disable-SharedAutomation.ps1
 ```
 
-## Plantillas de automatización
+## Plantillas y ejemplos
 
 ```text
 automations/_template/README.md
@@ -153,6 +174,7 @@ automations/_template/skills/intake-analysis/SKILL.md
 automations/_template/routing-rules/default-runtime-route.json
 automations/_template/deployment/manifest.json
 handover/_template-AUTOMATION-HANDOVER.md
+examples/shared-automation/example-manifest.json
 ```
 
 ## Estados de automatización compartida
@@ -198,6 +220,7 @@ routing rules
 handover
 plantillas
 scripts PowerShell
+examples
 ```
 
 Supabase:
@@ -226,7 +249,7 @@ nunca tablas públicas
 Continuar con:
 
 ```text
-crear ejemplo de automation manifest completo
-actualizar README con scripts oficiales
-crear checklist de handover por automatización
+actualizar README con scripts oficiales mínimos
+crear scaffold de handover generado por automation_key
+crear script para preparar carpeta automations/{automation_key} localmente
 ```
