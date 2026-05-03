@@ -40,11 +40,11 @@ sin eliminar el fallback operativo del flujo normal.
 - [x] Informe inicial creado: `docs/13-phase-3-runtime-hardening-report.md`.
 - [x] Handover inicial creado: `handover/NEXT_AI_HANDOVER_AFTER_RUNTIME_HARDENING.md`.
 - [x] Checklist vivo creado.
-- [ ] Parche técnico aplicado en Edge Functions.
-- [ ] Funciones desplegadas en Supabase.
-- [ ] Prueba controlada ejecutada.
-- [ ] Evidencia `runtime.execution_completed` registrada.
-- [ ] PR técnico creado o actualizado.
+- [x] Parche técnico aplicado en Edge Functions.
+- [x] Funciones desplegadas en Supabase.
+- [x] Prueba controlada ejecutada.
+- [x] Evidencia `runtime.execution_completed` registrada.
+- [x] PR técnico creado o actualizado.
 - [ ] Handover final actualizado con commits, PRs, errores y siguiente paso.
 
 ## Checklist técnico
@@ -63,49 +63,49 @@ sin eliminar el fallback operativo del flujo normal.
 
 ### 2. Hardening runtime-router
 
-- [ ] Modificar `supabase/functions/runtime-router/index.ts`.
-- [ ] Agregar detección de modo controlado:
+- [x] Modificar `supabase/functions/runtime-router/index.ts`.
+- [x] Agregar detección de modo controlado:
   - `input.runtime_validation_mode = "deterministic_hardening"`
-  - o `event_type = "runtime.hardening.validation"`
-- [ ] Registrar evento `runtime.deterministic_route_used`.
-- [ ] Evitar llamada al proveedor externo solo para esa ruta controlada.
-- [ ] Seleccionar skill determinística `intake-analysis` o la indicada por `input.skill_key`.
-- [ ] Garantizar que `used_fallback = false` en la ruta determinística.
-- [ ] Mantener fallback normal para flujo productivo.
+  - o `event_type = "runtime.hardening.validation"`.
+- [x] Registrar evento `runtime.deterministic_route_used`.
+- [x] Evitar llamada al proveedor externo solo para esa ruta controlada.
+- [x] Seleccionar skill determinística `intake-analysis` o la indicada por `input.skill_key`.
+- [x] Garantizar que `used_fallback = false` en la ruta determinística.
+- [x] Mantener fallback normal para flujo productivo.
 
 ### 3. Hardening skill-executor
 
-- [ ] Modificar `supabase/functions/skill-executor/index.ts`.
-- [ ] Agregar modo determinístico equivalente para `deterministic_hardening`.
-- [ ] Evitar llamada al proveedor externo solo durante prueba controlada.
-- [ ] Retornar `completed_with_fallback = false` en esa ruta.
-- [ ] Registrar `skill.execution_completed`.
-- [ ] Mantener fallback normal para flujo productivo.
+- [x] Modificar `supabase/functions/skill-executor/index.ts`.
+- [x] Agregar modo determinístico equivalente para `deterministic_hardening`.
+- [x] Evitar llamada al proveedor externo solo durante prueba controlada.
+- [x] Retornar `completed_with_fallback = false` en esa ruta.
+- [x] Registrar `skill.execution_completed`.
+- [x] Mantener fallback normal para flujo productivo.
 
 ### 4. Bloqueos conocidos
 
 - [x] GitHub bloqueó la actualización directa de Edge Functions por referencias a nombres de variables de entorno sensibles, sin exposición de valores reales.
 - [x] Supabase deploy desde conector fue bloqueado por controles de seguridad del entorno incluso con función de prueba sin valores sensibles.
-- [ ] Resolver bloqueo con PowerShell local mínimo o flujo seguro alternativo.
-- [ ] Documentar cuál opción se usó.
+- [x] Resolver bloqueo con PowerShell local mínimo.
+- [x] Documentar opción usada: PowerShell local + `npx supabase`.
 
 ### 5. Seguridad
 
-- [ ] Revisar que no haya valores sensibles hardcodeados.
-- [ ] Confirmar que archivos locales de entorno no se suben.
-- [ ] Confirmar que carpetas temporales locales de Supabase no se suben.
-- [ ] Confirmar que solo se usan nombres de variables de entorno, nunca valores reales.
+- [x] Revisar que no haya valores sensibles hardcodeados.
+- [x] Confirmar que archivos locales de entorno no se suben.
+- [x] Confirmar que carpetas temporales locales de Supabase no se suben.
+- [x] Confirmar que solo se usan nombres de variables de entorno, nunca valores reales.
 
 ### 6. Deploy Supabase
 
-- [ ] Desplegar `runtime-router`.
-- [ ] Desplegar `skill-executor`.
-- [ ] Confirmar funciones ACTIVE.
-- [ ] Registrar fecha/hora del deploy en el informe.
+- [x] Desplegar `runtime-router`.
+- [x] Desplegar `skill-executor`.
+- [x] Confirmar funciones desplegadas correctamente por salida CLI.
+- [x] Registrar fecha/hora del deploy en el informe.
 
 ### 7. Prueba controlada
 
-Payload esperado:
+Payload usado:
 
 ```json
 {
@@ -114,32 +114,52 @@ Payload esperado:
   "input": {
     "runtime_validation_mode": "deterministic_hardening",
     "skill_key": "intake-analysis",
-    "raw_request": "Prueba controlada de hardening runtime sin fallback."
+    "raw_request": "Prueba controlada de hardening runtime sin fallback.",
+    "source": "phase_3_runtime_hardening_runtime_patch",
+    "commit": "35c752a"
   }
 }
 ```
 
-- [ ] Ejecutar prueba mediante `runtime-router-local-test` o flujo seguro equivalente.
-- [ ] Confirmar respuesta `ok = true`.
-- [ ] Confirmar `completed_with_fallback = false`.
-- [ ] Confirmar evento `runtime.deterministic_route_used`.
-- [ ] Confirmar evento `skill.execution_completed`.
-- [ ] Confirmar evento final `runtime.execution_completed`.
+- [x] Ejecutar prueba mediante `runtime-router-local-test`.
+- [x] Confirmar respuesta `ok = true`.
+- [x] Confirmar `completed_with_fallback = false`.
+- [x] Confirmar evento `runtime.deterministic_route_used`.
+- [x] Confirmar evento `skill.execution_completed`.
+- [x] Confirmar evento final `runtime.execution_completed`.
 
 ### 8. Evidencia SQL
 
-- [ ] Consultar `runtime_events` para `automation-template`.
-- [ ] Consultar `execution_tasks` para la tarea generada.
-- [ ] Registrar IDs relevantes en `docs/13-phase-3-runtime-hardening-report.md`.
-- [ ] Verificar que no quedan tareas `running` colgadas.
+- [x] Consultar `runtime_events` para `automation-template`.
+- [x] Consultar `execution_tasks` para la tarea generada.
+- [x] Registrar IDs relevantes en `docs/13-phase-3-runtime-hardening-report.md`.
+- [x] Verificar tareas generadas como `completed`.
+
+IDs de evidencia:
+
+```text
+runtime_task_id = c7eeff53-9318-4909-8bff-cdd5a5ba1b2c
+skill_task_id = 2eb68441-9c24-4d49-b006-21a5b98d0489
+```
+
+Eventos confirmados:
+
+```text
+runtime.trigger_received
+runtime.deterministic_route_used
+runtime.skill_execution_requested
+skill.execution_started
+skill.execution_completed
+runtime.execution_completed
+```
 
 ### 9. GitHub / PR
 
-- [ ] Commit técnico de Edge Functions.
-- [ ] Commit de documentación actualizada.
-- [ ] Abrir Pull Request contra `main` si el cambio técnico se realiza en rama.
-- [ ] Registrar PR en informe y handover.
-- [ ] No fusionar sin evidencia mínima de aceptación.
+- [x] Commit técnico de Edge Functions.
+- [x] Commit de documentación actualizada.
+- [x] Abrir Pull Request contra `main`: PR #3.
+- [x] Registrar PR en informe y handover.
+- [ ] Fusionar PR #3 después de revisión final.
 
 ### 10. Handover final
 
@@ -149,7 +169,7 @@ Actualizar `handover/NEXT_AI_HANDOVER_AFTER_RUNTIME_HARDENING.md` con:
 - [ ] Archivos modificados.
 - [ ] Commits.
 - [ ] Pull Requests.
-- [ ] Comandos PowerShell validados, si hubo.
+- [ ] Comandos PowerShell validados.
 - [ ] Errores encontrados.
 - [ ] Riesgos pendientes.
 - [ ] Siguiente paso exacto.
@@ -171,15 +191,19 @@ Estado: aceptada.
 
 ### Decisión 003 — PowerShell mínimo por bloqueo de conectores
 
-GitHub y Supabase bloquearon las acciones necesarias para modificar o desplegar Edge Functions desde el conector. Por tanto, el siguiente paso técnico requiere PowerShell local mínimo.
+GitHub y Supabase bloquearon las acciones necesarias para modificar o desplegar Edge Functions desde el conector. Se usó PowerShell local en bloques pequeños.
 
-Estado: aceptada operativamente por necesidad técnica.
+Estado: completada.
+
+### Decisión 004 — Ruta determinística limitada
+
+La ruta determinística queda limitada a payload explícito de validación y no reemplaza el flujo normal.
+
+Estado: aceptada.
 
 ## Pendientes capturados para no olvidar
 
-- [ ] Aplicar parche técnico localmente si los conectores siguen bloqueados.
-- [ ] Confirmar que la rama local esté sincronizada con `main` después del merge manual del PR #2.
-- [ ] Crear nueva rama técnica si es necesario: `phase-3-runtime-hardening-runtime-patch`.
-- [ ] Desplegar `runtime-router` y `skill-executor` desde Supabase CLI.
-- [ ] Ejecutar prueba controlada vía `runtime-router-local-test`.
-- [ ] Actualizar informe, checklist y handover con evidencia real.
+- [ ] Actualizar handover final.
+- [ ] Revisar PR #3.
+- [ ] Fusionar PR #3 a `main` si no hay objeciones.
+- [ ] Evaluar actualización posterior de `protocol.config.json`.
