@@ -14,6 +14,7 @@ runtime_state = active
 runtime_health = healthy
 shared_runtime = built
 final_tests_for_new_automations = deferred
+powershell_scripts = built
 ```
 
 ## Lectura rápida
@@ -39,6 +40,14 @@ Leer en este orden:
 5. handover/_template-AUTOMATION-HANDOVER.md
 ```
 
+Scripts asociados:
+
+```text
+scripts/powershell/shared-automation/Invoke-SharedAutomationFunction.ps1
+scripts/powershell/shared-automation/New-SharedAutomationScaffold.ps1
+scripts/powershell/shared-automation/Register-SharedAutomationFromManifest.ps1
+```
+
 ## Ruta de pruebas finales
 
 Leer solo cuando termine la construcción y se autorice el cierre de pruebas:
@@ -47,6 +56,14 @@ Leer solo cuando termine la construcción y se autorice el cierre de pruebas:
 1. docs/17-deferred-final-test-plan.md
 2. docs/21-shared-automation-final-test-closeout-guide.md
 3. docs/22-shared-automation-controlled-activation-checklist.md
+```
+
+Scripts asociados:
+
+```text
+scripts/powershell/shared-automation/Invoke-SharedAutomationFinalTests.ps1
+scripts/powershell/shared-automation/Enable-SharedAutomationControlledActivation.ps1
+scripts/powershell/shared-automation/Disable-SharedAutomation.ps1
 ```
 
 ## Documentos principales del runtime compartido
@@ -81,7 +98,7 @@ Define el orden exacto de llamadas para construir nuevas automatizaciones.
 docs/20-shared-automation-powershell-operator-guide.md
 ```
 
-Guía de ejecución desde PowerShell con payloads y consultas SQL no destructivas.
+Guía de ejecución desde PowerShell con payloads, scripts oficiales y consultas SQL no destructivas.
 
 ### 21 - Final Test Closeout Guide
 
@@ -110,6 +127,17 @@ create-shared-automation
 register-shared-automation-components
 update-shared-automation-build-state
 create-shared-automation-local-test
+```
+
+## Scripts PowerShell oficiales
+
+```text
+scripts/powershell/shared-automation/Invoke-SharedAutomationFunction.ps1
+scripts/powershell/shared-automation/New-SharedAutomationScaffold.ps1
+scripts/powershell/shared-automation/Register-SharedAutomationFromManifest.ps1
+scripts/powershell/shared-automation/Invoke-SharedAutomationFinalTests.ps1
+scripts/powershell/shared-automation/Enable-SharedAutomationControlledActivation.ps1
+scripts/powershell/shared-automation/Disable-SharedAutomation.ps1
 ```
 
 ## Plantillas de automatización
@@ -165,6 +193,7 @@ manifests
 routing rules
 handover
 plantillas
+scripts PowerShell
 ```
 
 Supabase:
@@ -190,11 +219,10 @@ nunca tablas públicas
 
 ## Próximo bloque recomendado
 
-Después de este índice, continuar con:
+Continuar con:
 
 ```text
-crear scripts PowerShell versionados bajo scripts/powershell/
-crear script de scaffold local
-crear script de validación/registro
-crear script de cierre final de pruebas
+crear script de verificación SQL no destructiva
+crear ejemplo de automation manifest completo
+actualizar README con scripts oficiales
 ```
