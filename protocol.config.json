@@ -5,11 +5,21 @@
   "license": "proprietary / internal use",
   "repo_strategy": "monorepo",
   "automation_key": "automation-template",
-  "status": "phase_3_runtime_active_with_fallback",
+  "status": "phase_3_runtime_hardening_validated",
   "runtime_state": "active",
   "activation_guarded": false,
   "runtime_health": "healthy",
-  "source_of_truth_note": "Supabase runtime is currently ahead of GitHub. GitHub must be synchronized after repository is private.",
+  "source_of_truth_note": "GitHub main contains the validated Phase 3 runtime hardening code and documentation. Supabase runtime was deployed and validated with deterministic hardening evidence.",
+  "phase_3_runtime_hardening": {
+    "validated": true,
+    "pull_request": 3,
+    "merge_commit_sha": "b589527f9294488c79bcb1382498eccb1bbf145a",
+    "runtime_task_id": "c7eeff53-9318-4909-8bff-cdd5a5ba1b2c",
+    "skill_task_id": "2eb68441-9c24-4d49-b006-21a5b98d0489",
+    "completed_with_fallback": false,
+    "deterministic_route": true,
+    "final_event": "runtime.execution_completed"
+  },
   "generated_at": "2026-05-03T04:34:23.964566+00:00",
-  "updated_at": "2026-05-03T14:10:00.000000+00:00"
+  "updated_at": "2026-05-03T16:12:34.000000+00:00"
 }
