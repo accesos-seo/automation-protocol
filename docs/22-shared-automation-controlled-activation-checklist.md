@@ -4,6 +4,20 @@
 
 Checklist para activar una automatización compartida solo después de pruebas finales exitosas y evidencia documentada.
 
+## Scripts oficiales
+
+Activación controlada:
+
+```text
+scripts/powershell/shared-automation/Enable-SharedAutomationControlledActivation.ps1
+```
+
+Pausa / rollback controlado:
+
+```text
+scripts/powershell/shared-automation/Disable-SharedAutomation.ps1
+```
+
 ## Regla principal
 
 No activar si falta evidencia.
@@ -45,6 +59,24 @@ Estado mínimo requerido antes de validar:
 status = pending_final_validation
 health_status = pending_final_validation
 activation_guarded = true
+```
+
+## Ruta recomendada con script
+
+```powershell
+$env:SUPABASE_URL = "https://lwurzjrghzwzxbhrulyn.supabase.co"
+$env:SUPABASE_AUTH_TOKEN = "REPLACE_WITH_SUPABASE_AUTH_TOKEN"
+
+.\scripts\powershell\shared-automation\Enable-SharedAutomationControlledActivation.ps1 `
+  -AutomationKey "REPLACE_WITH_AUTOMATION_KEY"
+```
+
+Para marcar como `validated` sin activar todavía:
+
+```powershell
+.\scripts\powershell\shared-automation\Enable-SharedAutomationControlledActivation.ps1 `
+  -AutomationKey "REPLACE_WITH_AUTOMATION_KEY" `
+  -SkipActiveStep
 ```
 
 ## Paso 1 - Marcar como validated
@@ -157,6 +189,14 @@ evento inesperado crítico
 config faltante
 secret no disponible
 comportamiento no determinístico riesgoso
+```
+
+Ruta con script:
+
+```powershell
+.\scripts\powershell\shared-automation\Disable-SharedAutomation.ps1 `
+  -AutomationKey "REPLACE_WITH_AUTOMATION_KEY" `
+  -Reason "REPLACE_WITH_REASON"
 ```
 
 Payload de pausa:
