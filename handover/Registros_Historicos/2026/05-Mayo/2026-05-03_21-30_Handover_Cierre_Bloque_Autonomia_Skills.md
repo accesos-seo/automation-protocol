@@ -21,6 +21,21 @@ docs/29-autonomous-block-authorization-policy.md
 docs/25-ai-block-execution-procedure-v2.md
 ```
 
+## Empoderamiento explicito agregado
+
+La IA queda autorizada dentro de un bloque aprobado a crear lo que necesite para completar el trabajo, incluyendo:
+
+```text
+crear archivos nuevos en el repositorio GitHub
+actualizar archivos existentes en el repositorio GitHub
+crear ramas GitHub
+crear pull requests
+crear tablas nuevas en Supabase cuando la arquitectura o el bloque lo requiera
+crear indices/comentarios de soporte para esas tablas
+```
+
+Esto no requiere nueva confirmacion porque la IA trabaja con el contexto del proyecto y debe tomar decisiones de implementacion dentro del alcance aprobado.
+
 ## Acciones que deben ejecutarse sin preguntar dentro de un bloque aprobado
 
 ```text
@@ -29,8 +44,13 @@ auditorias
 conteos
 comparaciones
 INSERT/UPDATE no destructivos de registros operativos
+CREATE TABLE cuando el bloque aprobado lo requiera
+CREATE INDEX de soporte cuando sea necesario
+COMMENT ON TABLE/COLUMN para documentacion
 crear ramas GitHub
 crear PRs
+crear archivos en GitHub
+actualizar archivos en GitHub
 crear documentacion
 actualizar handovers
 crear scripts
@@ -53,8 +73,10 @@ guardar secretos reales
 exponer secretos
 crear proyecto Supabase nuevo
 crear ramas Supabase con coste
-modificar esquema DDL
-modificar politicas RLS
+DROP TABLE
+DROP COLUMN
+ALTER TABLE sobre tablas productivas existentes si puede romper compatibilidad
+modificar politicas RLS restrictivas o productivas
 activar automatizaciones
 ejecutar pruebas finales runtime
 cambiar activation_guarded = false
@@ -114,12 +136,7 @@ da5d15a87a07a7ee199e924dd55c7a8c7a35c00f58c3df94af01b941cd311d42  _template/tech
 ```text
 #17 docs: record Supabase registration of template skills
 #18 build: package all required skills for storage upload
-```
-
-Nuevo PR de esta politica:
-
-```text
-pending at creation time: docs/autonomous block authorization policy
+#19 docs: certify autonomous block authorization policy
 ```
 
 ## Siguientes tareas recomendadas
@@ -147,10 +164,9 @@ pending at creation time: docs/autonomous block authorization policy
 ### Tarea 3 - Resolver PRs pendientes
 
 ```text
-1. Revisar PRs #17 y #18.
-2. Revisar PR de politica autonoma.
-3. Resolver conflictos si GitHub indica mergeable = false.
-4. Fusionar cuando proceda, sin escribir directo a main.
+1. Revisar PRs #17, #18 y #19.
+2. Resolver conflictos si GitHub indica mergeable = false.
+3. Fusionar cuando proceda, sin escribir directo a main.
 ```
 
 ### Tarea 4 - Verificacion global no destructiva
