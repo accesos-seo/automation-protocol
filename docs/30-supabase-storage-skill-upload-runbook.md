@@ -72,7 +72,23 @@ Expected result for the script check:
 True
 ```
 
+If `Test-Path .\dist\skills\packages` returns `False`, the root manifest exists but the generated local ZIP package directory is missing. Regenerate the five local packages under `dist\skills\packages` before running upload.
+
 Do not paste the PowerShell prompt itself. Paste only commands. For example, do not paste `PS C:\Users\ceoel>`; paste only what comes after `>`.
+
+## Regenerate missing local skill packages
+
+Use this only when `dist\skills\packages` or any expected `skill.zip` is missing.
+
+```powershell
+.\scripts\powershell\shared-automation\New-SkillPackagePlan.ps1 -AutomationKey "_template" -SkillKey "scaffold-validation" -SkillSourcePath "automations\_template\skills\scaffold-validation\SKILL.md" -Version "0.1.0" -OutputRoot "dist\skills\packages"
+.\scripts\powershell\shared-automation\New-SkillPackagePlan.ps1 -AutomationKey "_template" -SkillKey "technical-deployment" -SkillSourcePath "automations\_template\skills\technical-deployment\SKILL.md" -Version "0.1.0" -OutputRoot "dist\skills\packages"
+.\scripts\powershell\shared-automation\New-SkillPackagePlan.ps1 -AutomationKey "_template" -SkillKey "web-source-capture" -SkillSourcePath "automations\_template\skills\web-source-capture\SKILL.md" -Version "0.1.0" -OutputRoot "dist\skills\packages"
+.\scripts\powershell\shared-automation\New-SkillPackagePlan.ps1 -AutomationKey "automation-template" -SkillKey "intake-analysis" -SkillSourcePath "automations\automation-template\skills\intake-analysis\SKILL.md" -Version "0.1.0" -OutputRoot "dist\skills\packages"
+.\scripts\powershell\shared-automation\New-SkillPackagePlan.ps1 -AutomationKey "automation-template" -SkillKey "requirements-validation" -SkillSourcePath "automations\automation-template\skills\requirements-validation\SKILL.md" -Version "0.1.0" -OutputRoot "dist\skills\packages"
+```
+
+Then confirm all five ZIPs exist and rerun dry-run. If dry-run reports SHA256 mismatch, stop and refresh package manifest/checksum files intentionally before upload.
 
 ## Secure local upload script
 
