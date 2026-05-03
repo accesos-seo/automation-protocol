@@ -20,6 +20,32 @@ activation_guarded = true
 
 No ejecutar runtime tests ni activar automatizaciones hasta el bloque final de validación.
 
+## Scripts oficiales
+
+```text
+scripts/powershell/shared-automation/Invoke-SharedAutomationFunction.ps1
+scripts/powershell/shared-automation/New-SharedAutomationScaffold.ps1
+scripts/powershell/shared-automation/Register-SharedAutomationFromManifest.ps1
+scripts/powershell/shared-automation/Invoke-SharedAutomationFinalTests.ps1
+scripts/powershell/shared-automation/Enable-SharedAutomationControlledActivation.ps1
+scripts/powershell/shared-automation/Disable-SharedAutomation.ps1
+```
+
+Para construcción normal usar principalmente:
+
+```text
+New-SharedAutomationScaffold.ps1
+Register-SharedAutomationFromManifest.ps1
+```
+
+Reservar para cierre final:
+
+```text
+Invoke-SharedAutomationFinalTests.ps1
+Enable-SharedAutomationControlledActivation.ps1
+Disable-SharedAutomation.ps1
+```
+
 ## Variables base
 
 > No guardar secrets reales en GitHub.
@@ -27,8 +53,8 @@ No ejecutar runtime tests ni activar automatizaciones hasta el bloque final de v
 ```powershell
 $ErrorActionPreference = "Stop"
 
-$SUPABASE_URL = "https://lwurzjrghzwzxbhrulyn.supabase.co"
-$SUPABASE_ANON_KEY = "REPLACE_WITH_SUPABASE_ANON_OR_AUTH_TOKEN"
+$env:SUPABASE_URL = "https://lwurzjrghzwzxbhrulyn.supabase.co"
+$env:SUPABASE_AUTH_TOKEN = "REPLACE_WITH_SUPABASE_AUTH_TOKEN"
 
 $AutomationKey = "cliente-area-proceso"
 $AutomationName = "Cliente Area Proceso"
@@ -37,55 +63,16 @@ $DefaultSkillKey = "intake-analysis"
 $CommitSha = "REPLACE_WITH_GITHUB_COMMIT_SHA"
 ```
 
-## Helper de invocación
+## Opción recomendada - scripts versionados
+
+### 1. Generar scaffold
 
 ```powershell
-function Invoke-SupabaseFunction {
-    param(
-        [Parameter(Mandatory = $true)] [string] $FunctionName,
-        [Parameter(Mandatory = $true)] [hashtable] $Payload
-    )
-
-    $uri = "$SUPABASE_URL/functions/v1/$FunctionName"
-
-    $headers = @{
-        "Authorization" = "Bearer $SUPABASE_ANON_KEY"
-        "apikey" = $SUPABASE_ANON_KEY
-        "Content-Type" = "application/json"
-    }
-
-    $body = $Payload | ConvertTo-Json -Depth 30
-
-    Invoke-RestMethod `
-        -Uri $uri `
-        -Method POST `
-        -Headers $headers `
-        -Body $body
-}
-```
-
-## 1. Generar scaffold
-
-```powershell
-$scaffoldPayload = @{
-    automation_key = $AutomationKey
-    automation_name = $AutomationName
-    protocol_name = $ProtocolName
-    objective = "Objetivo operativo de la automatización."
-    inputs = @(
-        "Entrada principal"
-    )
-    outputs = @(
-        "Salida principal"
-    )
-    default_skill_key = $DefaultSkillKey
-}
-
-$scaffold = Invoke-SupabaseFunction `
-    -FunctionName "generate-shared-automation-scaffold" `
-    -Payload $scaffoldPayload
-
-$scaffold | ConvertTo-Json -Depth 30
+.\scripts\powershell\shared-automation\New-SharedAutomationScaffold.ps1 `
+  -AutomationKey $AutomationKey `
+  -AutomationName $AutomationName `
+  -ProtocolName $ProtocolName `
+  -DefaultSkillKey $DefaultSkillKey
 ```
 
 Resultado esperado:
@@ -95,15 +82,9 @@ ok = true
 files[] contiene rutas y contenido para GitHub
 ```
 
-## 2. Crear archivos en GitHub
+### 2. Crear archivos en GitHub
 
-Crear en GitHub los archivos devueltos por:
-
-```text
-generate-shared-automation-scaffold
-```
-
-Rutas esperadas:
+Crear los archivos devueltos por el scaffold generator:
 
 ```text
 automations/$AutomationKey/README.md
@@ -114,177 +95,56 @@ automations/$AutomationKey/deployment/manifest.json
 handover/$AutomationKey-HANDOVER.md
 ```
 
-## 3. Cargar manifest local
+### 3. Registrar desde manifest
 
-Si el manifest existe localmente:
-
-```powershell
-$ManifestPath = ".\automations\$AutomationKey\deployment\manifest.json"
-$manifest = Get-Content $ManifestPath -Raw | ConvertFrom-Json
-```
-
-Si se obtiene desde otra fuente, asegurar que `$manifest` sea un objeto PowerShell equivalente al JSON.
-
-## 4. Validar manifest
+Después de crear y commitear los archivos:
 
 ```powershell
-$validationPayload = @{
-    manifest = $manifest
-}
-
-$validation = Invoke-SupabaseFunction `
-    -FunctionName "validate-shared-automation-manifest" `
-    -Payload $validationPayload
-
-$validation | ConvertTo-Json -Depth 30
+.\scripts\powershell\shared-automation\Register-SharedAutomationFromManifest.ps1 `
+  -ManifestPath ".\automations\$AutomationKey\deployment\manifest.json" `
+  -CommitSha $CommitSha
 ```
 
-Continuar solo si:
+Este script ejecuta:
 
 ```text
-valid = true
-errors = []
+validate-shared-automation-manifest
+build-components-payload-from-manifest
+build-shared-automation-draft
+register-shared-automation-components
+update-shared-automation-build-state -> scaffolded
+update-shared-automation-build-state -> components_registered
+update-shared-automation-build-state -> pending_final_validation
 ```
 
-## 5. Construir payload de componentes
+No ejecuta pruebas finales ni activación.
 
-```powershell
-$componentPayloadRequest = @{
-    strict = $true
-    manifest = $manifest
-}
+## Opción manual - helper de invocación
 
-$componentPayloadResponse = Invoke-SupabaseFunction `
-    -FunctionName "build-components-payload-from-manifest" `
-    -Payload $componentPayloadRequest
+El helper versionado vive en:
 
-$componentPayloadResponse | ConvertTo-Json -Depth 30
+```text
+scripts/powershell/shared-automation/Invoke-SharedAutomationFunction.ps1
 ```
 
-Payload de salida:
+Uso base:
 
 ```powershell
-$componentPayload = $componentPayloadResponse.payload
-```
+. .\scripts\powershell\shared-automation\Invoke-SharedAutomationFunction.ps1
 
-## 6. Crear draft en Supabase
-
-```powershell
-$draftPayload = @{
+$response = Invoke-SharedAutomationFunction `
+  -SupabaseUrl $env:SUPABASE_URL `
+  -AuthToken $env:SUPABASE_AUTH_TOKEN `
+  -FunctionName "generate-shared-automation-scaffold" `
+  -Payload @{
     automation_key = $AutomationKey
     automation_name = $AutomationName
     protocol_name = $ProtocolName
-    objective = "Objetivo operativo de la automatización."
-    inputs = @("Entrada principal")
-    outputs = @("Salida principal")
     default_skill_key = $DefaultSkillKey
-    commit_sha = $CommitSha
-    metadata = @{
-        build_source = "powershell_operator_guide"
-    }
-}
-
-$draft = Invoke-SupabaseFunction `
-    -FunctionName "build-shared-automation-draft" `
-    -Payload $draftPayload
-
-$draft | ConvertTo-Json -Depth 30
+  }
 ```
 
-Estado esperado:
-
-```text
-status = draft_scaffold_generated
-health_status = pending_github_files
-activation_guarded = true
-```
-
-## 7. Registrar componentes
-
-```powershell
-$registeredComponents = Invoke-SupabaseFunction `
-    -FunctionName "register-shared-automation-components" `
-    -Payload $componentPayload
-
-$registeredComponents | ConvertTo-Json -Depth 30
-```
-
-Resultado esperado:
-
-```text
-inserted.agents
-inserted.skills
-inserted.configs
-inserted.rules
-```
-
-## 8. Mover estado a scaffolded
-
-```powershell
-$stateScaffoldedPayload = @{
-    automation_key = $AutomationKey
-    target_state = "scaffolded"
-    commit_sha = $CommitSha
-    evidence = @{
-        github_files_created = $true
-    }
-    notes = "Archivos scaffold creados en GitHub."
-}
-
-$stateScaffolded = Invoke-SupabaseFunction `
-    -FunctionName "update-shared-automation-build-state" `
-    -Payload $stateScaffoldedPayload
-
-$stateScaffolded | ConvertTo-Json -Depth 30
-```
-
-## 9. Mover estado a components_registered
-
-```powershell
-$stateComponentsPayload = @{
-    automation_key = $AutomationKey
-    target_state = "components_registered"
-    evidence = @{
-        components_registered = $true
-    }
-    notes = "Componentes registrados en Supabase."
-}
-
-$stateComponents = Invoke-SupabaseFunction `
-    -FunctionName "update-shared-automation-build-state" `
-    -Payload $stateComponentsPayload
-
-$stateComponents | ConvertTo-Json -Depth 30
-```
-
-## 10. Mover estado a pending_final_validation
-
-```powershell
-$statePendingValidationPayload = @{
-    automation_key = $AutomationKey
-    target_state = "pending_final_validation"
-    evidence = @{
-        ready_for_final_tests = $true
-    }
-    notes = "Construcción terminada. Pruebas finales diferidas."
-}
-
-$statePendingValidation = Invoke-SupabaseFunction `
-    -FunctionName "update-shared-automation-build-state" `
-    -Payload $statePendingValidationPayload
-
-$statePendingValidation | ConvertTo-Json -Depth 30
-```
-
-Estado esperado:
-
-```text
-status = pending_final_validation
-health_status = pending_final_validation
-activation_guarded = true
-```
-
-## 11. Verificación SQL no destructiva
+## Verificación SQL no destructiva
 
 ```sql
 select automation_key, status, health_status, activation_guarded, repository_path, commit_sha, updated_at
@@ -327,6 +187,8 @@ No ejecutar:
 ```text
 runtime-router-local-test
 create-shared-automation-local-test
+Invoke-SharedAutomationFinalTests.ps1
+Enable-SharedAutomationControlledActivation.ps1
 activación a active
 validación runtime final
 borrados masivos
