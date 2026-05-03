@@ -2,62 +2,73 @@
 
 ## Estado alcanzado
 
-Estado parcial: `phase-3-runtime-hardening` iniciado, rama remota creada y diagnóstico documentado.
+Estado alcanzado: `phase_3_runtime_hardening_validated`.
+
+La prueba controlada de Phase 3 Runtime Hardening terminó correctamente con:
+
+```text
+runtime.execution_completed
+```
+
+y no con:
+
+```text
+runtime.execution_completed_with_fallback
+```
+
+Resultado confirmado:
+
+```text
+completed_with_fallback = false
+deterministic_route = true
+```
 
 No se reinició el diagnóstico. Se partió desde los handovers e informes existentes, con el runtime Supabase ya activo y sincronizado previamente a GitHub.
 
 ## Archivos modificados
 
+Código runtime:
+
+- `supabase/functions/runtime-router/index.ts`
+- `supabase/functions/skill-executor/index.ts`
+
+Documentación:
+
 - `docs/13-phase-3-runtime-hardening-report.md`
+- `docs/13-phase-3-runtime-hardening-tasks.md`
 - `handover/NEXT_AI_HANDOVER_AFTER_RUNTIME_HARDENING.md`
 
 ## Commits
 
-- `ffa5e580832ec51f4665210427d36adb0aeb5000` - `docs: start runtime hardening report`
-- Commit de este handover generado en la misma rama.
+- `35c752a` — `runtime: add deterministic hardening validation path`
+- `3f1709c` — `docs: record successful runtime hardening validation`
+- `5c2f54d` — `docs: mark runtime hardening checklist progress`
+- Commit de este handover: `handover: finalize runtime hardening validation state`
 
 ## Pull Requests
 
-Pendiente abrir PR hasta aplicar el parche técnico de Edge Functions y validar al menos una prueba controlada.
+- PR #3 — `Runtime hardening: deterministic validation path`
+- Estado al cierre de este handover: abierto en draft, pendiente de revisión final y merge.
 
-## Comandos PowerShell validados
+## Deploy
 
-Validados por el operador antes de este handover:
+Funciones desplegadas en Supabase project `lwurzjrghzwzxbhrulyn`:
+
+- `runtime-router`
+- `skill-executor`
+
+Deploy ejecutado desde PowerShell usando:
 
 ```powershell
-git status
-git switch main
-git pull origin main
-git checkout -b phase-3-runtime-hardening
-git status
-git branch --show-current
+npx supabase functions deploy runtime-router --project-ref lwurzjrghzwzxbhrulyn
+npx supabase functions deploy skill-executor --project-ref lwurzjrghzwzxbhrulyn
 ```
 
-Resultado observado:
+La CLI global no estaba disponible; `npx` funcionó correctamente.
 
-```text
-On branch phase-3-runtime-hardening
-nothing to commit, working tree clean
-phase-3-runtime-hardening
-```
+## Prueba controlada validada
 
-## Errores encontrados
-
-El conector GitHub bloqueó la escritura directa de `supabase/functions/runtime-router/index.ts` por controles preventivos de seguridad al detectar nombres de variables sensibles de entorno en el código. No se solicitó ni expuso ningún secreto real.
-
-## Riesgos pendientes
-
-- Falta aplicar el parche determinístico en:
-  - `supabase/functions/runtime-router/index.ts`
-  - `supabase/functions/skill-executor/index.ts`
-- Falta desplegar nuevas versiones en Supabase.
-- Falta ejecutar prueba controlada que produzca `runtime.execution_completed`.
-- Puede ser necesario usar PowerShell local para editar/desplegar si el conector sigue bloqueando escrituras de Edge Functions.
-- La ruta determinística debe quedar limitada a validación explícita y no reemplazar el flujo normal de producción.
-
-## Siguiente paso exacto
-
-Aplicar una ruta de validación determinística activada solo por payload explícito:
+Payload de prueba:
 
 ```json
 {
@@ -66,34 +77,136 @@ Aplicar una ruta de validación determinística activada solo por payload explí
   "input": {
     "runtime_validation_mode": "deterministic_hardening",
     "skill_key": "intake-analysis",
-    "raw_request": "Prueba controlada de hardening runtime sin fallback."
+    "raw_request": "Prueba controlada de hardening runtime sin fallback.",
+    "source": "phase_3_runtime_hardening_runtime_patch",
+    "commit": "35c752a"
   }
 }
 ```
 
-La ruta debe:
+Resultado PowerShell:
 
-1. registrar `runtime.deterministic_route_used`;
-2. seleccionar `intake-analysis` sin llamar a OpenRouter para la decisión del runtime;
-3. ejecutar el skill en modo determinístico equivalente;
-4. cerrar con `runtime.execution_completed` y `completed_with_fallback: false`.
+```text
+ok: True
+proxy_status: 200
+runtime ok: True
+task_id: c7eeff53-9318-4909-8bff-cdd5a5ba1b2c
+completed_with_fallback: False
+deterministic_route: True
+```
+
+## Evidencia Supabase
+
+Runtime task:
+
+```text
+runtime_task_id = c7eeff53-9318-4909-8bff-cdd5a5ba1b2c
+status = completed
+error_message = null
+completed_with_fallback = false
+deterministic_route = true
+completed_at = 2026-05-03 15:52:46.926+00
+```
+
+Skill task:
+
+```text
+skill_task_id = 2eb68441-9c24-4d49-b006-21a5b98d0489
+status = completed
+error_message = null
+completed_at = 2026-05-03 15:52:46.858+00
+```
+
+Eventos confirmados en orden:
+
+```text
+runtime.trigger_received
+runtime.deterministic_route_used
+runtime.skill_execution_requested
+skill.execution_started
+skill.execution_completed
+runtime.execution_completed
+```
+
+## Comandos PowerShell validados
+
+Sincronización y rama técnica:
+
+```powershell
+git fetch origin
+git switch main
+git pull --ff-only origin main
+git switch -c phase-3-runtime-hardening-runtime-patch
+```
+
+Commit técnico:
+
+```powershell
+git add .\supabase\functions\runtime-router\index.ts .\supabase\functions\skill-executor\index.ts
+git commit -m "runtime: add deterministic hardening validation path"
+git push -u origin phase-3-runtime-hardening-runtime-patch
+```
+
+Deploy:
+
+```powershell
+npx supabase functions deploy runtime-router --project-ref lwurzjrghzwzxbhrulyn
+npx supabase functions deploy skill-executor --project-ref lwurzjrghzwzxbhrulyn
+```
+
+Prueba controlada:
+
+```powershell
+Invoke-RestMethod -Uri "https://lwurzjrghzwzxbhrulyn.supabase.co/functions/v1/runtime-router-local-test" -Method POST -Headers $headers -Body $body
+```
+
+## Errores encontrados
+
+- El conector GitHub bloqueó la escritura directa de Edge Functions por controles preventivos del entorno.
+- El conector Supabase bloqueó deploy directo desde el asistente.
+- Primer bloque PowerShell fue demasiado ruidoso por `git diff`; se reemplazó por bloques cortos.
+- PowerShell quedó en modo continuación `>>`; se recuperó con `Ctrl+C`.
+- `supabase` no estaba disponible como comando global.
+- Se resolvió deploy usando `npx supabase`.
+
+## Riesgos pendientes
+
+- PR #3 sigue en draft hasta revisión final y merge.
+- La ruta determinística debe permanecer limitada a validación explícita.
+- Conviene evaluar si `protocol.config.json` debe actualizar estado después del merge.
+- Conviene añadir prueba automatizada posterior para el payload controlado.
+
+## Siguiente paso exacto
+
+1. Revisar PR #3.
+2. Convertir PR #3 de draft a ready, si la revisión es satisfactoria.
+3. Fusionar PR #3 a `main`.
+4. Después del merge, evaluar commit separado para actualizar `protocol.config.json` a un estado tipo `phase_3_runtime_hardening_validated`.
 
 ## Prompt de arranque para la próxima IA
 
 ```text
-Continúa el proyecto `accesos-seo/automation-protocol` en la rama `phase-3-runtime-hardening`. No reinicies el diagnóstico.
+Continúa el proyecto `accesos-seo/automation-protocol`. No reinicies el diagnóstico.
 
 Lee primero:
 
 1. `docs/13-phase-3-runtime-hardening-report.md`
-2. `handover/NEXT_AI_HANDOVER_AFTER_RUNTIME_HARDENING.md`
-3. `handover/NEXT_AI_HANDOVER_PHASE_3_RUNTIME_HARDENING.md`
-4. `supabase/functions/runtime-router/index.ts`
-5. `supabase/functions/skill-executor/index.ts`
+2. `docs/13-phase-3-runtime-hardening-tasks.md`
+3. `handover/NEXT_AI_HANDOVER_AFTER_RUNTIME_HARDENING.md`
+4. PR #3 — `Runtime hardening: deterministic validation path`
+5. `supabase/functions/runtime-router/index.ts`
+6. `supabase/functions/skill-executor/index.ts`
+7. `protocol.config.json`
 
-Estado: rama remota creada y diagnóstico documentado. El conector GitHub bloqueó la escritura directa sobre Edge Functions por nombres de variables sensibles de entorno, sin exposición de secretos. Si el conector no permite modificar esos archivos, usar PowerShell local de forma mínima para aplicar el parche, commit y push.
+Estado: Phase 3 Runtime Hardening validado. La prueba controlada produjo `runtime.execution_completed`, con `completed_with_fallback = false` y `deterministic_route = true`.
 
-Objetivo exacto: implementar una ruta determinística de validación activada solo por `input.runtime_validation_mode = "deterministic_hardening"` o `event_type = "runtime.hardening.validation"`, desplegar `runtime-router` y `skill-executor`, ejecutar prueba controlada y verificar evento final `runtime.execution_completed`.
+Evidencia:
 
-Reglas: no pedir ni pegar secretos; no solicitar service_role ni tokens; no subir `supabase/.temp/`; revisar que no haya secretos hardcodeados antes de commit; documentar avances en GitHub.
+- runtime task: `c7eeff53-9318-4909-8bff-cdd5a5ba1b2c`
+- skill task: `2eb68441-9c24-4d49-b006-21a5b98d0489`
+- eventos: `runtime.trigger_received`, `runtime.deterministic_route_used`, `runtime.skill_execution_requested`, `skill.execution_started`, `skill.execution_completed`, `runtime.execution_completed`.
+
+Siguiente paso exacto: revisar PR #3, pasarlo de draft a ready si procede, fusionarlo a `main`, y luego decidir si actualizar `protocol.config.json` a `phase_3_runtime_hardening_validated`.
+
+Reglas: no pedir ni pegar credenciales; no subir carpetas temporales; documentar avances en GitHub; consultar siempre el checklist vivo antes de actuar.
 ```
