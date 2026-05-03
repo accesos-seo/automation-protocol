@@ -5,6 +5,11 @@
   "license": "proprietary / internal use",
   "repo_strategy": "monorepo",
   "automation_key": "automation-template",
-  "status": "phase_3_ready_but_activation_guarded",
-  "generated_at": "2026-05-03T04:34:23.964566+00:00"
+  "status": "phase_3_runtime_active_with_fallback",
+  "runtime_state": "active",
+  "activation_guarded": false,
+  "runtime_health": "healthy",
+  "source_of_truth_note": "Supabase runtime is currently ahead of GitHub. GitHub must be synchronized after repository is private.",
+  "generated_at": "2026-05-03T04:34:23.964566+00:00",
+  "updated_at": "2026-05-03T14:10:00.000000+00:00"
 }
