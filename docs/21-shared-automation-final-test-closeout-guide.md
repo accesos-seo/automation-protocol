@@ -12,6 +12,23 @@ Este documento no autoriza ejecutar pruebas durante construcción. Solo establec
 docs/17-deferred-final-test-plan.md
 ```
 
+## Script oficial
+
+```text
+scripts/powershell/shared-automation/Invoke-SharedAutomationFinalTests.ps1
+```
+
+Este script queda reservado para el cierre final. No debe ejecutarse durante construcción.
+
+Ejemplo de uso:
+
+```powershell
+$env:SUPABASE_URL = "https://lwurzjrghzwzxbhrulyn.supabase.co"
+$env:LOCAL_TEST_TOKEN = "REPLACE_WITH_LOCAL_TEST_TOKEN"
+
+.\scripts\powershell\shared-automation\Invoke-SharedAutomationFinalTests.ps1
+```
+
 ## Precondiciones obligatorias
 
 Antes de ejecutar pruebas finales, confirmar:
@@ -76,6 +93,8 @@ result.ok = true
 ```
 
 ## Prueba final 2 - Verificación SQL de inserts
+
+El script oficial imprime estas consultas para revisión.
 
 ```sql
 select automation_key, status, health_status, activation_guarded
@@ -209,6 +228,12 @@ Luego ejecutar checklist de activación controlada:
 
 ```text
 docs/22-shared-automation-controlled-activation-checklist.md
+```
+
+Script asociado:
+
+```text
+scripts/powershell/shared-automation/Enable-SharedAutomationControlledActivation.ps1
 ```
 
 ## Limpieza
