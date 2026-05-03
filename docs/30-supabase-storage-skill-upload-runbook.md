@@ -33,6 +33,47 @@ dist/skills/package-manifest.json
 dist/skills/SHA256SUMS.txt
 ```
 
+## Operator working directory
+
+Run the upload from the real Git repository root, not from a copied folder.
+
+Known good local path used during verification:
+
+```powershell
+cd C:\Users\ceoel\automation-protocol
+```
+
+A OneDrive copy was observed at:
+
+```powershell
+C:\Users\ceoel\OneDrive\Escritorio\Nueva carpeta\automation-protocol
+```
+
+That folder is not a Git repository and does not reliably contain the root-level upload script. Symptoms:
+
+```text
+fatal: not a git repository (or any of the parent directories): .git
+Upload-SkillPackagesToSupabaseStorage.ps1 : El término ... no se reconoce
+```
+
+Before running upload, confirm these checks from the repository root:
+
+```powershell
+git status
+git pull origin main
+Test-Path .\scripts\powershell\shared-automation\Upload-SkillPackagesToSupabaseStorage.ps1
+Test-Path .\dist\skills\package-manifest.json
+Test-Path .\dist\skills\packages
+```
+
+Expected result for the script check:
+
+```text
+True
+```
+
+Do not paste the PowerShell prompt itself. Paste only commands. For example, do not paste `PS C:\Users\ceoel>`; paste only what comes after `>`.
+
 ## Secure local upload script
 
 Use:
