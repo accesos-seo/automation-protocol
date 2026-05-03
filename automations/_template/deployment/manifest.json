@@ -1,0 +1,71 @@
+{
+  "automation_key": "REPLACE_WITH_AUTOMATION_KEY",
+  "automation_name": "REPLACE_WITH_AUTOMATION_NAME",
+  "protocol_name": "REPLACE_WITH_PROTOCOL_NAME",
+  "repo_strategy": "monorepo",
+  "runtime": {
+    "type": "shared_supabase_runtime",
+    "project_ref": "lwurzjrghzwzxbhrulyn",
+    "runtime_router": "runtime-router",
+    "skill_executor": "skill-executor"
+  },
+  "github": {
+    "repository": "accesos-seo/automation-protocol",
+    "repository_path": "automations/REPLACE_WITH_AUTOMATION_KEY"
+  },
+  "components": {
+    "agents": [
+      {
+        "agent_key": "orchestrator",
+        "agent_name": "Orchestrator Agent",
+        "agent_type": "orchestrator",
+        "definition_path": "automations/REPLACE_WITH_AUTOMATION_KEY/agents/orchestrator.md",
+        "status": "registered",
+        "capabilities": ["routing", "coordination", "validation"],
+        "skills": ["intake-analysis"],
+        "required_configs": ["OPENROUTER_API_KEY"]
+      }
+    ],
+    "skills": [
+      {
+        "skill_key": "intake-analysis",
+        "skill_name": "Intake Analysis Skill",
+        "skill_source_path": "automations/REPLACE_WITH_AUTOMATION_KEY/skills/intake-analysis/SKILL.md",
+        "skill_version": "0.1.0",
+        "runtime_location": "github",
+        "status": "registered",
+        "required_configs": ["OPENROUTER_API_KEY"]
+      }
+    ],
+    "configs": [
+      {
+        "config_key": "OPENROUTER_API_KEY",
+        "config_type": "secret",
+        "is_required": true,
+        "is_secret": true,
+        "config_status": "managed_in_supabase_secrets",
+        "description": "Secret usado por runtime/skills. No guardar valor real en GitHub ni tablas públicas."
+      }
+    ],
+    "rules": [
+      {
+        "rule_key": "default-runtime-route",
+        "rule_type": "runtime_routing",
+        "rule_version": "0.1.0",
+        "rule_source_path": "automations/REPLACE_WITH_AUTOMATION_KEY/routing-rules/default-runtime-route.json",
+        "status": "active",
+        "rule_config": {
+          "runtime_router": "runtime-router",
+          "skill_executor": "skill-executor",
+          "default_skill_key": "intake-analysis",
+          "fallback_allowed": true
+        }
+      }
+    ]
+  },
+  "status": {
+    "automation_registry_status": "scaffolded",
+    "health_status": "pending_validation",
+    "activation_guarded": true
+  }
+}
