@@ -1,0 +1,8 @@
+{
+  "agent_name": "orchestrator_agent",
+  "agent_type": "orchestrator",
+  "status": "registered_pending_activation",
+  "skills": [],
+  "capabilities": [],
+  "activation_guard": "blocked_until_deployment_validator_passes"
+}

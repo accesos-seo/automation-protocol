@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "required": [
+    "agent_name",
+    "agent_type",
+    "status",
+    "skills"
+  ]
+}

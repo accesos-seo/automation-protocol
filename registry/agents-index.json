@@ -1,0 +1,7 @@
+{
+  "agents": [
+    "orchestrator_agent",
+    "validator_agent",
+    "deployer_agent"
+  ]
+}

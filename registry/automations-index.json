@@ -1,0 +1,9 @@
+{
+  "automations": [
+    {
+      "automation_key": "automation-template",
+      "status": "template",
+      "path": "automations/_template"
+    }
+  ]
+}

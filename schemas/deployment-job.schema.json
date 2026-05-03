@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "required": [
+    "deploy_status",
+    "input_payload",
+    "deployment_plan"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "handoff_type": "scaffold_to_deployer",
+  "protocol_id": "",
+  "scaffold_job_id": "",
+  "artifact_manifest": [],
+  "required_environment_variables": [],
+  "pending_configs": [],
+  "deployment_targets": {
+    "supabase": true,
+    "github": true,
+    "agents": true
+  },
+  "validation_status": "passed_with_warnings",
+  "ready_for_deployment": true
+}

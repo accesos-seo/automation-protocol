@@ -1,0 +1,16 @@
+{
+  "skills": [
+    {
+      "skill_name": "web-source-capture",
+      "path": "automations/_template/skills/web-source-capture/SKILL.md"
+    },
+    {
+      "skill_name": "scaffold-validation",
+      "path": "automations/_template/skills/scaffold-validation/SKILL.md"
+    },
+    {
+      "skill_name": "technical-deployment",
+      "path": "automations/_template/skills/technical-deployment/SKILL.md"
+    }
+  ]
+}

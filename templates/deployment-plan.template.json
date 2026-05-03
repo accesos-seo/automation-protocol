@@ -1,0 +1,13 @@
+{
+  "deployment_job_id": "",
+  "targets": {
+    "github": true,
+    "supabase": true,
+    "agents": true
+  },
+  "config_check": {
+    "blocking_pending_configs": []
+  },
+  "steps": [],
+  "rollback": {}
+}

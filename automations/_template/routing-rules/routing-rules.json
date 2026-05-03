@@ -1,0 +1,18 @@
+{
+  "routing_rules_version": "0.1.0",
+  "default_agent": "orchestrator_agent",
+  "rules": [
+    {
+      "when": "source_capture_required",
+      "use_skill": "web-source-capture"
+    },
+    {
+      "when": "handoff_validation_required",
+      "use_skill": "scaffold-validation"
+    },
+    {
+      "when": "deployment_required",
+      "use_skill": "technical-deployment"
+    }
+  ]
+}

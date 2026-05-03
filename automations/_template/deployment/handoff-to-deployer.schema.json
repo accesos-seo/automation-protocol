@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "required": [
+    "handoff_type",
+    "protocol_id",
+    "scaffold_job_id",
+    "artifact_manifest",
+    "required_environment_variables",
+    "pending_configs",
+    "deployment_targets",
+    "validation_status",
+    "ready_for_deployment"
+  ]
+}

@@ -1,0 +1,979 @@
+Documento 3 — Fase 3: Desplegador Técnico
+1. Propósito del documento
+Este documento define de forma completa la Fase 3 del Skills Swarm Automation Pipeline, llamada:
+Fase 3 — Desplegador Técnico
+
+La Fase 3 recibe el scaffold técnico validado desde la Fase 2 y lo convierte en una automatización habilitada, versionada, registrada y lista para operar.
+Esta fase es la encargada de conectar los artefactos generados con el entorno real de ejecución: Supabase, GitHub, agentes, funciones, configuración, versionado, auditoría y estado final de activación.
+Este documento contiene:
+Proceso completo del Desplegador Técnico.
+Contrato de entrada desde Fase 2.
+Modelo de datos Supabase para Fase 3.
+Estados internos.
+Preparación de despliegue.
+Registro de artefactos.
+Integración con GitHub.
+Integración con Supabase.
+Registro de agentes.
+Configuración de variables.
+Validaciones de despliegue.
+Logs.
+Auditoría.
+Manejo de errores.
+Activación final de automatización.
+
+2. Ubicación dentro del pipeline general
+Fase 1: Especialista / Intake Protocol
+        ↓
+Automation Protocol Record aprobado
+        ↓
+Fase 2: Constructor Scaffold
+        ↓
+Scaffold técnico completo
+        ↓
+Fase 3: Desplegador Técnico
+        ↓
+Automatización final habilitada
+
+La Fase 3 comienza únicamente cuando la Fase 2 produce un scaffold listo para despliegue.
+Condición mínima:
+scaffold_job.status = ready_for_deployer
+validation_report.status = passed o passed_with_warnings
+handoff_to_deployer.ready_for_deployment = true
+
+
+3. Objetivo principal de la Fase 3
+Convertir el scaffold técnico generado en una Automatización Final Habilitada.
+La Fase 3 debe dejar el sistema en estado operativo o, si no puede hacerlo, debe dejar un reporte claro de bloqueo, pendientes y acciones requeridas.
+La pregunta central de esta fase es:
+¿El scaffold validado puede quedar registrado, versionado, configurado y listo para ejecutarse como automatización real?
+
+
+4. Principio operativo de la Fase 3
+La Fase 3 no debe reinterpretar el negocio ni modificar la arquitectura generada sin registro.
+Regla principal:
+Scaffold validado → Configuración técnica → Versionado → Deploy → Automatización activa
+
+El Desplegador Técnico no debe inventar:
+Credenciales.
+Tokens.
+Secrets.
+Repositorios no autorizados.
+Variables de entorno no documentadas.
+Cambios de arquitectura no registrados.
+Todo valor faltante debe mantenerse como:
+PENDING_CONFIG
+
+
+5. Componentes principales de la Fase 3
+La Fase 3 se compone de estos bloques:
+Deployment Job
+Trabajo principal de despliegue creado a partir del handoff de Fase 2.
+Deployment Agent
+Agente encargado de preparar, validar y ejecutar el despliegue.
+Config Resolver
+Revisa variables, secrets, endpoints y configuraciones pendientes.
+Supabase Deployer
+Prepara funciones, migraciones, tablas auxiliares o registros necesarios.
+GitHub Publisher
+Crea o actualiza repositorio, rama, commit, tags y manifiestos.
+Agent Registry Manager
+Registra agentes, skills y capabilities disponibles.
+Runtime Activator
+Marca la automatización como lista para operar.
+Deployment Validator
+Ejecuta pruebas de despliegue y consistencia.
+Deployment Logs
+Conserva evidencia técnica del proceso.
+Automation Registry
+Registro final de automatizaciones habilitadas.
+
+SECCIÓN A — Entrada de Fase 3
+6. Contrato de entrada desde Fase 2
+La Fase 3 recibe un paquete handoff-to-deployer.json generado por la Fase 2.
+Estructura mínima:
+{
+  "handoff_type": "scaffold_to_deployer",
+  "protocol_id": "",
+  "scaffold_job_id": "",
+  "project": {
+    "name": "",
+    "key": "",
+    "domain": ""
+  },
+  "artifact_manifest": [],
+  "required_environment_variables": [],
+  "pending_configs": [],
+  "deployment_targets": {
+    "supabase": true,
+    "github": true,
+    "agents": true
+  },
+  "validation_status": "passed_with_warnings",
+  "ready_for_deployment": true
+}
+
+7. Validaciones de entrada
+Antes de iniciar despliegue, el Desplegador Técnico debe validar:
+protocol_id existe
+scaffold_job_id existe
+ready_for_deployment = true
+validation_status = passed o passed_with_warnings
+artifact_manifest no está vacío
+required_environment_variables existe
+pending_configs está documentado
+
+Si hay pending_configs bloqueantes:
+status = deploy_blocked
+reason = pending_required_config
+
+Si hay warnings no bloqueantes:
+status = deploy_preparing
+continue_with_warnings = true
+
+
+SECCIÓN B — Modelo de datos Supabase para Fase 3
+8. Principio de base de datos en Fase 3
+Supabase debe registrar todo el ciclo de despliegue.
+Debe permitir:
+Crear jobs de despliegue.
+Registrar configuración requerida.
+Guardar estado de despliegue.
+Registrar repositorio GitHub.
+Registrar agentes activos.
+Registrar automatizaciones habilitadas.
+Registrar logs.
+Auditar cada cambio.
+9. Tablas principales de Fase 3
+Tablas recomendadas:
+deployment_jobs
+deployment_configs
+deployment_logs
+github_repositories
+agent_registry
+automation_registry
+runtime_events
+execution_tasks
+phase_events
+audit_logs
+
+Las tablas execution_tasks, phase_events y audit_logs se reutilizan del núcleo común.
+
+10. Tabla: deployment_jobs
+Guarda cada ejecución de despliegue.
+Propósito
+Representar el trabajo principal de habilitación técnica.
+Campos sugeridos
+create table public.deployment_jobs (
+  id uuid primary key default gen_random_uuid(),
+  protocol_id uuid not null references public.automation_protocols(id),
+  scaffold_job_id uuid not null references public.scaffold_jobs(id),
+  project_id uuid references public.projects(id),
+  deploy_status text not null default 'deploy_queued',
+  input_payload jsonb not null default '{}'::jsonb,
+  deployment_plan jsonb not null default '{}'::jsonb,
+  output_summary jsonb not null default '{}'::jsonb,
+  error_message text,
+  started_at timestamptz,
+  completed_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+Estados posibles
+deploy_queued
+deploy_input_validating
+deploy_preparing
+deploy_config_checking
+deploy_github_publishing
+deploy_supabase_applying
+deploy_agent_registering
+deploy_validation_running
+deploy_completed
+deploy_blocked
+deploy_failed
+automation_active
+
+
+11. Tabla: deployment_configs
+Guarda variables, secrets esperados y configuración requerida.
+Propósito
+Controlar qué configuración necesita cada automatización antes de activarse.
+Campos sugeridos
+create table public.deployment_configs (
+  id uuid primary key default gen_random_uuid(),
+  deployment_job_id uuid not null references public.deployment_jobs(id),
+  protocol_id uuid not null references public.automation_protocols(id),
+  config_key text not null,
+  config_type text not null,
+  is_required boolean not null default true,
+  is_secret boolean not null default false,
+  config_status text not null default 'pending',
+  source text,
+  description text,
+  created_at timestamptz not null default now(),
+  resolved_at timestamptz
+);
+
+Tipos de configuración
+environment_variable
+supabase_secret
+api_endpoint
+webhook_url
+github_setting
+agent_runtime_setting
+
+Estados
+pending
+resolved
+accepted_as_pending
+not_required
+
+
+12. Tabla: deployment_logs
+Guarda logs técnicos de despliegue.
+Propósito
+Tener evidencia de cada paso ejecutado.
+Campos sugeridos
+create table public.deployment_logs (
+  id uuid primary key default gen_random_uuid(),
+  deployment_job_id uuid not null references public.deployment_jobs(id),
+  protocol_id uuid not null references public.automation_protocols(id),
+  log_level text not null default 'info',
+  step_name text not null,
+  message text not null,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+Log levels
+info
+warning
+error
+critical
+
+
+13. Tabla: github_repositories
+Guarda la relación entre automatización y repositorio.
+Propósito
+Registrar dónde quedó versionado el scaffold y su despliegue.
+Campos sugeridos
+create table public.github_repositories (
+  id uuid primary key default gen_random_uuid(),
+  deployment_job_id uuid references public.deployment_jobs(id),
+  protocol_id uuid not null references public.automation_protocols(id),
+  repository_name text not null,
+  repository_url text,
+  branch_name text,
+  commit_sha text,
+  tag_name text,
+  publish_status text not null default 'pending',
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+Estados
+pending
+created
+updated
+committed
+tagged
+failed
+
+
+14. Tabla: agent_registry
+Registra los agentes disponibles para operación.
+Propósito
+Saber qué agentes fueron generados, registrados y habilitados.
+Campos sugeridos
+create table public.agent_registry (
+  id uuid primary key default gen_random_uuid(),
+  deployment_job_id uuid references public.deployment_jobs(id),
+  protocol_id uuid not null references public.automation_protocols(id),
+  scaffold_job_id uuid references public.scaffold_jobs(id),
+  agent_name text not null,
+  agent_type text not null,
+  agent_definition_path text,
+  status text not null default 'registered',
+  capabilities jsonb not null default '[]'::jsonb,
+  skills jsonb not null default '[]'::jsonb,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+Agent types
+orchestrator_agent
+domain_agent
+quality_gate_agent
+integration_agent
+validator_agent
+deployment_agent
+
+Estados
+registered
+active
+inactive
+failed
+archived
+
+
+15. Tabla: automation_registry
+Registro final de automatizaciones habilitadas.
+Propósito
+Representar cada automatización como producto operativo dentro del sistema.
+Campos sugeridos
+create table public.automation_registry (
+  id uuid primary key default gen_random_uuid(),
+  protocol_id uuid not null references public.automation_protocols(id),
+  project_id uuid references public.projects(id),
+  deployment_job_id uuid not null references public.deployment_jobs(id),
+  automation_name text not null,
+  automation_key text not null unique,
+  automation_status text not null default 'created',
+  version text not null default '1.0.0',
+  repository_url text,
+  runtime_config jsonb not null default '{}'::jsonb,
+  health_status text not null default 'unknown',
+  activated_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+Estados
+created
+configured
+deployed
+active
+paused
+failed
+archived
+
+
+16. Tabla: runtime_events
+Registra eventos de ejecución una vez activada la automatización.
+Propósito
+Preparar el sistema para operación, monitoreo y auditoría posterior.
+Campos sugeridos
+create table public.runtime_events (
+  id uuid primary key default gen_random_uuid(),
+  automation_id uuid references public.automation_registry(id),
+  protocol_id uuid references public.automation_protocols(id),
+  event_type text not null,
+  event_status text not null default 'received',
+  payload jsonb not null default '{}'::jsonb,
+  result jsonb,
+  error_message text,
+  created_at timestamptz not null default now(),
+  processed_at timestamptz
+);
+
+Estados
+received
+processing
+completed
+failed
+ignored
+
+
+SECCIÓN C — Deployment Plan
+17. Definición
+El Deployment Plan es el mapa técnico que indica cómo se desplegará el scaffold.
+Debe generarse antes de tocar GitHub, Supabase o registros activos.
+18. Estructura mínima
+{
+  "protocol_id": "",
+  "scaffold_job_id": "",
+  "deployment_job_id": "",
+  "project": {},
+  "targets": {
+    "github": {
+      "enabled": true,
+      "repository_name": "",
+      "branch_strategy": "feature_branch",
+      "tag_version": "v1.0.0"
+    },
+    "supabase": {
+      "enabled": true,
+      "migrations": [],
+      "functions": [],
+      "secrets": []
+    },
+    "agents": {
+      "enabled": true,
+      "agents_to_register": []
+    }
+  },
+  "required_configs": [],
+  "blocking_pending_configs": [],
+  "non_blocking_warnings": [],
+  "rollback_plan": {}
+}
+
+19. Reglas del Deployment Plan
+- Debe generarse antes de ejecutar deploy.
+- Debe listar todos los targets.
+- Debe separar configs bloqueantes de no bloqueantes.
+- Debe contener estrategia de rollback.
+- Debe guardarse en deployment_jobs.deployment_plan.
+
+
+SECCIÓN D — Integración con GitHub
+20. Propósito
+GitHub será el sistema de versionado técnico de los artefactos generados.
+La Fase 3 debe crear o actualizar el repositorio correspondiente, registrar commits y permitir trazabilidad entre protocolo, scaffold y despliegue.
+21. Estrategia de repositorio
+Opciones posibles:
+repo_por_automatizacion
+repo_monorepo_con_carpetas
+repo_por_cliente_o_dominio
+
+Decisión recomendada inicial:
+repo_monorepo_con_carpetas
+
+Razón:
+- Facilita gobernanza.
+- Centraliza automatizaciones.
+- Permite versionar múltiples proyectos.
+- Reduce fragmentación.
+- Simplifica auditoría.
+
+Estructura sugerida:
+automations-repository/
+├── automations/
+│   └── [automation-key]/
+│       ├── agents/
+│       ├── skills/
+│       ├── routing-rules/
+│       ├── supabase/
+│       ├── deployment/
+│       ├── validation-report.json
+│       └── README.md
+├── shared/
+│   ├── templates/
+│   └── scripts/
+└── registry/
+    └── automations-index.json
+
+22. Flujo GitHub
+1. Validar que GitHub está habilitado.
+2. Resolver repository_name.
+3. Crear rama de despliegue.
+4. Subir artefactos del scaffold.
+5. Crear commit.
+6. Crear tag si corresponde.
+7. Registrar commit_sha.
+8. Actualizar github_repositories.
+
+23. Reglas GitHub
+- Nunca subir .env real.
+- Nunca subir secrets.
+- Sí subir .env.example.
+- Sí subir validation-report.json.
+- Sí subir handoff-to-deployer.json.
+- Cada commit debe incluir protocol_id y scaffold_job_id.
+
+Formato de commit:
+[automation] add scaffold for {automation_key} ({protocol_id})
+
+
+SECCIÓN E — Integración con Supabase
+24. Propósito
+Supabase será el entorno principal de datos, eventos, registros, funciones y runtime del protocolo.
+25. Responsabilidades del Supabase Deployer
+- Aplicar migraciones si existen.
+- Registrar funciones si existen.
+- Validar variables necesarias.
+- Guardar registros de automatización.
+- Registrar agentes.
+- Actualizar estados.
+- Emitir eventos de runtime.
+
+26. Supabase functions
+Si el scaffold incluye funciones, deben registrarse como parte del plan.
+Ejemplo:
+supabase/functions/router.ts
+supabase/functions/[automation-key]-handler/index.ts
+
+27. Migraciones
+Si el scaffold incluye migraciones, deben aplicarse solo después de validación.
+Reglas:
+- No aplicar migraciones destructivas sin marca explícita.
+- Registrar cada migración en deployment_logs.
+- Si una migración falla, detener deploy.
+- Guardar error_message.
+
+28. Secrets Supabase
+Los secrets no deben guardarse en tablas con valor real.
+La tabla deployment_configs solo debe guardar metadatos:
+config_key
+config_type
+is_required
+is_secret
+config_status
+
+Los valores reales deben configurarse usando mecanismos seguros del entorno.
+
+SECCIÓN F — Registro de agentes
+29. Propósito
+Cada agente generado en Fase 2 debe quedar registrado en Fase 3.
+Esto permite saber qué capacidades están disponibles para la automatización.
+30. Registro mínimo por agente
+{
+  "agent_name": "",
+  "agent_type": "",
+  "capabilities": [],
+  "skills": [],
+  "status": "registered",
+  "protocol_id": "",
+  "scaffold_job_id": ""
+}
+
+31. Activación de agentes
+Un agente puede pasar a active solo si:
+- Su definición existe.
+- Sus skills existen.
+- Sus routing rules existen.
+- No tiene configs bloqueantes pendientes.
+- El deployment validation pasó.
+
+
+SECCIÓN G — Validaciones de despliegue
+32. Deployment Validator
+Antes de marcar una automatización como activa, se debe ejecutar el Deployment Validator.
+33. Checks obligatorios
+handoff_to_deployer existe
+validation_report existe
+artifact_manifest completo
+GitHub commit registrado si github.enabled = true
+Supabase configs revisadas si supabase.enabled = true
+agentes registrados si agents.enabled = true
+no hay secrets hardcodeados
+pending_configs bloqueantes = 0
+automation_registry creado
+
+34. Estados de validación
+passed
+passed_with_warnings
+failed
+
+La automatización solo puede activarse si:
+validation_status = passed o passed_with_warnings
+blocking_pending_configs = []
+
+
+SECCIÓN H — Activación final
+35. Automation Registry
+Cuando el despliegue pasa validación, se crea o actualiza un registro en automation_registry.
+Estado inicial:
+configured
+
+Luego, si todos los targets están listos:
+automation_status = active
+health_status = healthy
+activated_at = now()
+
+36. Evento final
+La Fase 3 debe emitir:
+deployment.automation_active
+
+Este evento representa el cierre exitoso del pipeline completo.
+
+SECCIÓN I — Proceso paso a paso
+37. Flujo completo de Fase 3
+1. Recibir evento scaffold.ready_for_deployer.
+2. Crear deployment_job.
+3. Validar handoff-to-deployer.
+4. Cambiar estado a deploy_input_validating.
+5. Generar Deployment Plan.
+6. Revisar required_environment_variables.
+7. Registrar deployment_configs.
+8. Separar configs bloqueantes y no bloqueantes.
+9. Si hay bloqueantes, status = deploy_blocked.
+10. Si no hay bloqueantes, preparar GitHub.
+11. Crear o actualizar repositorio/rama.
+12. Subir artefactos.
+13. Crear commit y tag.
+14. Registrar github_repositories.
+15. Preparar Supabase.
+16. Aplicar migraciones no destructivas.
+17. Registrar funciones.
+18. Registrar agentes.
+19. Crear automation_registry.
+20. Ejecutar Deployment Validator.
+21. Si pasa, marcar deployment_job = deploy_completed.
+22. Marcar automation_registry = active.
+23. Emitir deployment.automation_active.
+
+
+38. Flujo con estados
+deploy_queued
+        ↓
+deploy_input_validating
+        ↓
+deploy_preparing
+        ↓
+deploy_config_checking
+        ↓
+deploy_github_publishing
+        ↓
+deploy_supabase_applying
+        ↓
+deploy_agent_registering
+        ↓
+deploy_validation_running
+        ↓
+deploy_completed
+        ↓
+automation_active
+
+Estados alternativos:
+deploy_blocked
+deploy_failed
+
+
+SECCIÓN J — Execution Tasks
+39. Uso de execution_tasks en Fase 3
+Cada operación importante del Desplegador Técnico debe registrarse como execution_task.
+Ejemplos:
+validate_deployment_handoff
+generate_deployment_plan
+resolve_configs
+publish_to_github
+apply_supabase_migrations
+register_supabase_functions
+register_agents
+run_deployment_validator
+activate_automation
+
+40. Extensión recomendada
+La tabla execution_tasks debe poder asociarse también a deployment_jobs:
+alter table public.execution_tasks
+add column if not exists deployment_job_id uuid references public.deployment_jobs(id);
+
+
+SECCIÓN K — Automatizaciones internas de Fase 3
+41. Eventos automáticos
+Eventos mínimos:
+deployment.job_created
+deployment.input_validated
+deployment.plan_created
+deployment.config_blocked
+deployment.github_published
+deployment.supabase_applied
+deployment.agents_registered
+deployment.validation_passed
+deployment.validation_failed
+deployment.completed
+deployment.automation_active
+deployment.failed
+
+42. Acciones por evento
+deployment.job_created
+- Registrar audit log.
+- Crear execution_task validate_deployment_handoff.
+- Cambiar estado a deploy_input_validating.
+
+deployment.plan_created
+- Guardar deployment_plan.
+- Crear registros en deployment_configs.
+- Cambiar estado a deploy_config_checking.
+
+deployment.config_blocked
+- Cambiar estado a deploy_blocked.
+- Registrar pending configs bloqueantes.
+- No ejecutar GitHub ni Supabase.
+
+deployment.github_published
+- Registrar repository_url.
+- Registrar branch_name.
+- Registrar commit_sha.
+- Crear deployment_log.
+
+deployment.supabase_applied
+- Registrar migraciones aplicadas.
+- Registrar funciones detectadas.
+- Crear deployment_log.
+
+deployment.validation_passed
+- Cambiar deployment_job a deploy_completed.
+- Crear o actualizar automation_registry.
+- Emitir deployment.automation_active.
+
+deployment.failed
+- Cambiar estado a deploy_failed.
+- Guardar error_message.
+- No activar automatización.
+
+
+SECCIÓN L — Seguridad
+43. Principios de seguridad
+La Fase 3 debe garantizar:
+- No exponer secrets.
+- No subir .env real a GitHub.
+- No guardar tokens en tablas públicas.
+- No aplicar migraciones destructivas sin autorización.
+- No activar automatizaciones con configs bloqueantes pendientes.
+- Registrar auditoría completa.
+
+44. Manejo de secrets
+Regla:
+Las tablas guardan metadatos de secrets, nunca el valor real.
+
+Ejemplo correcto:
+OPENAI_API_KEY → pending / required / secret
+
+Ejemplo incorrecto:
+OPENAI_API_KEY=sk-...
+
+45. Archivos prohibidos en GitHub
+.env
+.env.local
+secrets.json
+service-role-key.txt
+*.pem
+*.key
+
+46. Archivos permitidos
+.env.example
+README.md
+validation-report.json
+handoff-to-deployer.json
+deployment-manifest.json
+
+
+SECCIÓN M — Manejo de errores
+47. Errores posibles
+Handoff inválido
+status = deploy_blocked
+reason = invalid_deployment_handoff
+
+Configuración bloqueante pendiente
+status = deploy_blocked
+reason = pending_required_config
+
+Error GitHub
+status = deploy_failed
+reason = github_publish_failed
+
+Error Supabase
+status = deploy_failed
+reason = supabase_apply_failed
+
+Error registrando agentes
+status = deploy_failed
+reason = agent_registration_failed
+
+Error de validación final
+status = deploy_failed
+reason = deployment_validation_failed
+
+
+SECCIÓN N — Rollback
+48. Principio de rollback
+Todo despliegue debe tener una estrategia mínima de reversión.
+49. Rollback GitHub
+- Registrar commit anterior.
+- Registrar branch previo.
+- Permitir revert commit.
+
+50. Rollback Supabase
+- No ejecutar migraciones destructivas automáticamente.
+- Para migraciones aplicadas, registrar archivo y timestamp.
+- Preparar rollback manual cuando aplique.
+
+51. Rollback de automatización
+- Marcar automation_registry = paused o failed.
+- Desactivar agentes si es necesario.
+- Registrar runtime_event de rollback.
+
+
+SECCIÓN O — Criterios de aceptación
+52. Criterios funcionales
+La Fase 3 se considera correcta si:
+- Se crea deployment_job.
+- Se valida handoff-to-deployer.
+- Se genera deployment_plan.
+- Se registran deployment_configs.
+- Se publican artefactos en GitHub si aplica.
+- Se prepara Supabase si aplica.
+- Se registran agentes.
+- Se crea automation_registry.
+- Se ejecuta Deployment Validator.
+- Se marca deployment_job = deploy_completed.
+- Se marca automation_registry = active.
+- Se emite deployment.automation_active.
+
+53. Criterios de calidad
+- Ningún deploy avanza con configs bloqueantes pendientes.
+- Ningún secret queda en GitHub.
+- Ningún token queda en tablas públicas.
+- Ningún agente se activa sin skills registradas.
+- Ninguna automatización se marca active sin validación final.
+- Todo cambio queda auditado.
+
+
+SECCIÓN P — Checklist de implementación
+54. Checklist de base de datos
+[ ] Crear tabla deployment_jobs
+[ ] Crear tabla deployment_configs
+[ ] Crear tabla deployment_logs
+[ ] Crear tabla github_repositories
+[ ] Crear tabla agent_registry
+[ ] Crear tabla automation_registry
+[ ] Crear tabla runtime_events
+[ ] Extender execution_tasks con deployment_job_id
+[ ] Crear índices
+[ ] Crear triggers updated_at
+[ ] Crear RLS
+[ ] Crear funciones de cambio de estado
+
+55. Checklist de despliegue
+[ ] Validar handoff-to-deployer
+[ ] Crear deployment_plan
+[ ] Resolver configs
+[ ] Bloquear si hay configs requeridas pendientes
+[ ] Publicar a GitHub
+[ ] Registrar commit_sha
+[ ] Preparar Supabase
+[ ] Registrar funciones
+[ ] Registrar agentes
+[ ] Crear automation_registry
+[ ] Ejecutar Deployment Validator
+[ ] Activar automatización
+
+56. Checklist de seguridad
+[ ] Verificar ausencia de .env real
+[ ] Verificar ausencia de secrets hardcodeados
+[ ] Verificar pending configs
+[ ] Verificar permisos GitHub
+[ ] Verificar permisos Supabase
+[ ] Verificar RLS
+[ ] Verificar logs de auditoría
+
+
+SECCIÓN Q — SQL base sugerido
+57. Índices sugeridos
+create index idx_deployment_jobs_protocol_id on public.deployment_jobs(protocol_id);
+create index idx_deployment_jobs_scaffold_job_id on public.deployment_jobs(scaffold_job_id);
+create index idx_deployment_jobs_status on public.deployment_jobs(deploy_status);
+create index idx_deployment_configs_job_id on public.deployment_configs(deployment_job_id);
+create index idx_deployment_logs_job_id on public.deployment_logs(deployment_job_id);
+create index idx_github_repositories_protocol_id on public.github_repositories(protocol_id);
+create index idx_agent_registry_protocol_id on public.agent_registry(protocol_id);
+create index idx_automation_registry_key on public.automation_registry(automation_key);
+create index idx_runtime_events_automation_id on public.runtime_events(automation_id);
+
+58. Trigger updated_at para deployment_jobs
+create trigger set_deployment_jobs_updated_at
+before update on public.deployment_jobs
+for each row
+execute function public.set_updated_at();
+
+59. Trigger updated_at para automation_registry
+create trigger set_automation_registry_updated_at
+before update on public.automation_registry
+for each row
+execute function public.set_updated_at();
+
+
+SECCIÓN R — Contratos de transición
+60. Contrato Fase 2 → Fase 3
+Entrada:
+{
+  "event": "scaffold.ready_for_deployer",
+  "protocol_id": "",
+  "scaffold_job_id": "",
+  "handoff_to_deployer": {}
+}
+
+Salida:
+{
+  "deployment_job_id": "",
+  "status": "deploy_queued"
+}
+
+61. Contrato Fase 3 → Automatización activa
+Entrada:
+{
+  "deployment_job_id": "",
+  "validation_status": "passed",
+  "blocking_pending_configs": []
+}
+
+Salida:
+{
+  "automation_id": "",
+  "automation_status": "active",
+  "event": "deployment.automation_active"
+}
+
+
+SECCIÓN S — Definición final de éxito
+62. Resultado esperado de Fase 3
+La Fase 3 termina exitosamente cuando existe una automatización registrada, versionada y activa.
+Resultado ideal:
+deployment_job creado
+deployment_plan generado
+configs revisadas
+artefactos publicados en GitHub
+Supabase preparado
+agentes registrados
+automation_registry creado
+deployment validation aprobado
+automation_status = active
+deployment.automation_active emitido
+
+63. Estado final exitoso
+automation_active
+
+Este estado representa el cierre completo del pipeline.
+
+SECCIÓN T — Cierre del pipeline completo
+64. Pipeline final consolidado
+Skills Swarm Form
+        ↓
+Witness
+        ↓
+AI Intake Validator
+        ↓
+Especialista aprueba interpretación
+        ↓
+Automation Protocol Record
+        ↓
+Constructor Scaffold
+        ↓
+Scaffold Técnico Completo
+        ↓
+Desplegador Técnico
+        ↓
+GitHub + Supabase + Agent Registry
+        ↓
+Automation Registry
+        ↓
+Automation Active
+
+65. Regla final de gobierno
+Ninguna fase debe depender de interpretación manual innecesaria.
+Cada fase debe producir una salida estructurada, auditable y lista para la siguiente:
+Fase 1 produce protocolo.
+Fase 2 produce scaffold.
+Fase 3 produce automatización activa.
+
+
+66. Próximo paso recomendado
+Con los tres documentos definidos, el próximo paso debe ser construir el Plan de Implementación Técnico.
+Ese plan debe ordenar:
+1. SQL definitivo de Supabase.
+2. Migraciones.
+3. RLS.
+4. Triggers y funciones.
+5. Agente AI Intake Validator.
+6. Constructor Scaffold.
+7. Desplegador Técnico.
+8. Integración GitHub.
+9. Pruebas end-to-end.
+10. Activación del pipeline completo.
+
+

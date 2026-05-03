@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "required": [
+    "source_url",
+    "fetched_at",
+    "content_hash"
+  ]
+}

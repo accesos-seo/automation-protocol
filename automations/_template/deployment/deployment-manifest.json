@@ -1,0 +1,6 @@
+{
+  "automation_key": "automation-template",
+  "status": "phase_3_ready_but_activation_guarded",
+  "version": "0.1.0",
+  "contains_secrets": false
+}

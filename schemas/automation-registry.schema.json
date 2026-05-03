@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "required": [
+    "automation_key",
+    "automation_status",
+    "health_status"
+  ]
+}

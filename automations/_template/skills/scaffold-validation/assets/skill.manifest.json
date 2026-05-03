@@ -1,0 +1,6 @@
+{
+  "skill_name": "scaffold-validation",
+  "description": "Valida el handoff y artifact_manifest de Fase 2.",
+  "version": "0.1.0",
+  "contains_secrets": false
+}

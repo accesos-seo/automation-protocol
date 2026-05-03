@@ -1,0 +1,10 @@
+{
+  "repository_name": "automation-protocol",
+  "protocol_name": "Automation Deployment Protocol",
+  "language": "español",
+  "license": "proprietary / internal use",
+  "repo_strategy": "monorepo",
+  "automation_key": "automation-template",
+  "status": "phase_3_ready_but_activation_guarded",
+  "generated_at": "2026-05-03T04:34:23.964566+00:00"
+}

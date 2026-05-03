@@ -1,0 +1,301 @@
+{
+  "generated_at": "2026-05-03T04:34:23.964566+00:00",
+  "files": [
+    {
+      "path": ".env.example",
+      "sha256": "b7957033f4547f912489f7c9ca8dd90ff98ba00987fbfcaedc667dec512ba06f"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "f482a1b9394d580a4556c8b345c6d9e47c9667b1e980458fc22eaa8140cc293d"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "a6be655665d957de4ca051fcef27002ad065b39372c7ff2028495c06f49cb2aa"
+    },
+    {
+      "path": "README.md",
+      "sha256": "cd75d8a5be003dc5eeadbc17e97205d0a6f9178c730f8dbb9fcd18e315bdc923"
+    },
+    {
+      "path": "automations/_template/README.md",
+      "sha256": "bab820c0ad4649d84646ca7bbadfbb52f255da398c17762e95559accc06a7a13"
+    },
+    {
+      "path": "automations/_template/agents/deployer.agent.json",
+      "sha256": "9e81859b2bf0e05abdac3ca81f9974c1ba6dd59c9c474bc76074c75803f52c93"
+    },
+    {
+      "path": "automations/_template/agents/orchestrator.agent.json",
+      "sha256": "90c0d3291270d8b40d6b61ae993ad7e7fd28db349be36649ed5614f873d2c3e3"
+    },
+    {
+      "path": "automations/_template/agents/validator.agent.json",
+      "sha256": "628d525a270b68a9eba58f6b67c542dc5d78dd6ea08b44bedd1ff1ce3270bec4"
+    },
+    {
+      "path": "automations/_template/deployment/deployment-manifest.json",
+      "sha256": "82813bc6f6920f921a5a798fa3936989cd31d21cb43d094f70d773fb26c642c4"
+    },
+    {
+      "path": "automations/_template/deployment/deployment-plan.schema.json",
+      "sha256": "202d2d38fbb03ace815caaae3777db18b3e2ad2df10ade72cca456af98e5e606"
+    },
+    {
+      "path": "automations/_template/deployment/handoff-to-deployer.schema.json",
+      "sha256": "cc403633fd251b9301788ec8555e0ad99b8b598839e382c65ed3e82445022295"
+    },
+    {
+      "path": "automations/_template/deployment/validation-report.schema.json",
+      "sha256": "65bab3353e0bb11bfbf4d79846b13d4f762b9d36849d1fc3ac53f70016bbff14"
+    },
+    {
+      "path": "automations/_template/routing-rules/routing-rules.json",
+      "sha256": "3dda52c5c23844d003e4aaa08ca8d219b9a79d0ad8f2130664b2003f9f7e0442"
+    },
+    {
+      "path": "automations/_template/skills/scaffold-validation/SKILL.md",
+      "sha256": "0f8a213f77da0c6f4fffbfadaa08d85fe61360a9af55fc410e8de7081fc3583b"
+    },
+    {
+      "path": "automations/_template/skills/scaffold-validation/assets/README.md",
+      "sha256": "be65733fe537d3e5b2b94449e71b131ddbf0f304d555da309390a3fd5acc32e6"
+    },
+    {
+      "path": "automations/_template/skills/scaffold-validation/assets/skill.manifest.json",
+      "sha256": "b312bddcb4dd791745dbbe62b65076672f05367c338f5fdbd608d013de72b795"
+    },
+    {
+      "path": "automations/_template/skills/scaffold-validation/references/README.md",
+      "sha256": "0581c503d8c5bb7a44f050d82140933504bae85c37655239892f8c54bb0741d3"
+    },
+    {
+      "path": "automations/_template/skills/scaffold-validation/scripts/README.md",
+      "sha256": "87692c5c1717621206f86ef10b5f3f2518145ed1d72e693e0bc7fa878780d6ee"
+    },
+    {
+      "path": "automations/_template/skills/technical-deployment/SKILL.md",
+      "sha256": "5c647b32c3616f8787fae0b650b3cec79a22e576d278a73c66c5dfa6e8ff0d1f"
+    },
+    {
+      "path": "automations/_template/skills/technical-deployment/assets/README.md",
+      "sha256": "434f4d8208a33a987f8248ae41d535717f27591c7471a546aed34bde4092f89c"
+    },
+    {
+      "path": "automations/_template/skills/technical-deployment/assets/skill.manifest.json",
+      "sha256": "1efceace3c1864bee99b66030d5dbd0aa35639c7361594a3e07a51d59c1689a2"
+    },
+    {
+      "path": "automations/_template/skills/technical-deployment/references/README.md",
+      "sha256": "52d0cafec95d9a272ac6ff4b64881dfe163b716c06540af1b10c1bb85a096583"
+    },
+    {
+      "path": "automations/_template/skills/technical-deployment/scripts/README.md",
+      "sha256": "26dda0be8c6aed98febdd091fd4e505b1fbd9e011ef6ca2f18853a1a6d336354"
+    },
+    {
+      "path": "automations/_template/skills/web-source-capture/SKILL.md",
+      "sha256": "1ca1cebf224866122e421625e8c52ebab754fb061685ca7ae83d7804feb4cff9"
+    },
+    {
+      "path": "automations/_template/skills/web-source-capture/assets/README.md",
+      "sha256": "b81b28ebce335af1052135044ef65cb1b73445b8615df870c8028a4e24dc8104"
+    },
+    {
+      "path": "automations/_template/skills/web-source-capture/assets/skill.manifest.json",
+      "sha256": "b9ca0075b87a9becd2978278b6fc0aa24f63f9662456b5a0891c77a1e4af8de2"
+    },
+    {
+      "path": "automations/_template/skills/web-source-capture/references/README.md",
+      "sha256": "67f54d8e47994ef9c7662b51c59b7b9226883814b161dfc8861b707de7aa8ac6"
+    },
+    {
+      "path": "automations/_template/skills/web-source-capture/scripts/README.md",
+      "sha256": "4f544803e8f177570ed6f0b1438d1b9aef23b092c5cad9ca37e56395254e13f3"
+    },
+    {
+      "path": "automations/_template/supabase/functions/README.md",
+      "sha256": "d9b425e31176b4f14e331010f83d483a82916e723a733dff71777287a49ccb59"
+    },
+    {
+      "path": "automations/_template/supabase/migrations/README.md",
+      "sha256": "55f5858d7a1066f356ebb1c51629257872077bd8994bf578495e95120185e193"
+    },
+    {
+      "path": "automations/_template/supabase/policies/README.md",
+      "sha256": "16a29247c87f2f852ee3c095f7a64fb2766c06d2ccbea0279b7cff0c8996f3ae"
+    },
+    {
+      "path": "docs/00-overview.md",
+      "sha256": "b22d3307ee04bdc81f07c943eefcaedda725518f895a693b626bd259de4635d9"
+    },
+    {
+      "path": "docs/01-source-of-truth.md",
+      "sha256": "e5e32d6ef1bbf5904f39e54953b3a2d4f0f58bfe19afe1320cf77e01fd8a91a9"
+    },
+    {
+      "path": "docs/02-phase-1-intake-specialist.md",
+      "sha256": "7ed52d7de4965869c4a5a65694845c8fd7ed3563d7b2ae595fb56f440e4e8132"
+    },
+    {
+      "path": "docs/03-phase-2-constructor-scaffold.md",
+      "sha256": "d11a1c0c349d8d65894240a88fd541806c4b7acdbefc01d85eac3cc45cc30965"
+    },
+    {
+      "path": "docs/04-phase-3-technical-deployer.md",
+      "sha256": "ee961701e3e691e3feef2d28f8ccc321abe45ebabffbf3f729e33630ac90f59e"
+    },
+    {
+      "path": "docs/05-github-vs-supabase-residency-map.md",
+      "sha256": "0b7a20398bd9f05c7192ca3bc686fcafd3bd9aed41788f1094c648815d847eb0"
+    },
+    {
+      "path": "docs/06-security-and-secrets.md",
+      "sha256": "8beda6195bee754aa59a0b88e1175083fc73161b6305cc4d75467dae13cabb10"
+    },
+    {
+      "path": "docs/07-deployment-flow.md",
+      "sha256": "c7bdeb922a5a19c1164754143a2e072b998d446978eeded390439d5a4fc27c8f"
+    },
+    {
+      "path": "docs/08-rollback-strategy.md",
+      "sha256": "5822f8180f1f907da22ee6f4078c21048174af3f88b20be52f07ab7f2ea22667"
+    },
+    {
+      "path": "docs/09-acceptance-criteria.md",
+      "sha256": "180b483ca5e41a8a6b88a06a57bff06c1646c039a2009c5b4461d1073c9745a8"
+    },
+    {
+      "path": "docs/10-operator-handover.md",
+      "sha256": "e66f07dd5ad87291c0e1eb631b2716f767b66a4185a50bfcdfab32bc465da6cd"
+    },
+    {
+      "path": "handover/NEXT_AGENT_HANDOVER.md",
+      "sha256": "ddd4189e68b866a1cc84f51fbfad6ff7c9c8201a828ba013800b82b9f7c36f77"
+    },
+    {
+      "path": "handover/PHASE_1_PENDING_CONFIGS.md",
+      "sha256": "86be4f0ab0b4a108536ad7c54e9f52f3e7cd5ef3bfb534f3bbd717bad21ee701"
+    },
+    {
+      "path": "handover/PHASE_2_REVIEW_REQUIRED.md",
+      "sha256": "87e420589c25de502d548ae0b8d8a73bece98da8cf0385cf7ef1897365301f17"
+    },
+    {
+      "path": "handover/PHASE_3_READY_BUT_GUARDED.md",
+      "sha256": "221f27e6726f35c9be89a8731a66f96455a866a1f628c6b6a457edaeed58cbe4"
+    },
+    {
+      "path": "protocol.config.json",
+      "sha256": "f261ca810f8240756cae5b2d2db88b1f13d2186d52f9af2ff4a9409518a52e3e"
+    },
+    {
+      "path": "registry/agents-index.json",
+      "sha256": "0f3ef37dacbe226837f43fba4332c13660eaab847353bed9cd33f3025f8a71b2"
+    },
+    {
+      "path": "registry/automations-index.json",
+      "sha256": "10e8dc1d6435127e71a8ada2d2665786cff993badc4f0b11c27067fcbd72a498"
+    },
+    {
+      "path": "registry/skills-index.json",
+      "sha256": "91e40082d97126536d12cafd63888222b3b437aae7e2ae8d0d1338909a966753"
+    },
+    {
+      "path": "schemas/agent.schema.json",
+      "sha256": "cae72e3702ecb89ae8c0038e7f5b5305792dc47d0bcec50604da3a7e016b94a0"
+    },
+    {
+      "path": "schemas/automation-registry.schema.json",
+      "sha256": "34ad5bbecf149032995bdd6a5ffa061868685bbb6c8487f5099bffa6532136b4"
+    },
+    {
+      "path": "schemas/deployment-job.schema.json",
+      "sha256": "5287e89f1bf024e1ecbf99e5f66dcc88c9af110c1ec1ff25b1f568f7cfe93a00"
+    },
+    {
+      "path": "schemas/skill-registry.schema.json",
+      "sha256": "f9247585a96503a750edc5baf9b3739720367ec909244461340095f88efcf011"
+    },
+    {
+      "path": "schemas/source-evidence.schema.json",
+      "sha256": "4c869339df3dcc080961c9c5ab30db54995a0a6a16129800c0b03bfc635eb0c9"
+    },
+    {
+      "path": "source-material/Se ha pegado el markdown(7).md",
+      "sha256": "c4a2a8cdd5c7339bc09068609a7ac41380fbf09f9f9841b00e28ae59ea9e585a"
+    },
+    {
+      "path": "source-material/Texto pegado (2)(2).txt",
+      "sha256": "c762c5a9bec771cd5799eb3e03a6b93097db39bd5b6b70a06ec9bd8014e088e1"
+    },
+    {
+      "path": "supabase/README.md",
+      "sha256": "f785128fec6d5bd359b231484b07ccb2090a15e103844473a29ec43835d5a6e0"
+    },
+    {
+      "path": "supabase/functions/activate-automation/index.ts",
+      "sha256": "b7633a58f7403456fb37315ea05168df72dc7f05e14c543bc2b41e760f1d7f56"
+    },
+    {
+      "path": "supabase/functions/create-deployment-job/index.ts",
+      "sha256": "98ffa5136edf2b1c6542d6295c5ed76e313ba28a2caac2401ff1dde86e73469f"
+    },
+    {
+      "path": "supabase/functions/generate-deployment-plan/index.ts",
+      "sha256": "e08701985c2ab14a2592691dd4f9f7970f086946c3cc609c35fd1b60501e8d92"
+    },
+    {
+      "path": "supabase/functions/register-agents/index.ts",
+      "sha256": "dcc1d5d33af093705c2efd833a31d3faacf67562138e129e0c058c06326ef7aa"
+    },
+    {
+      "path": "supabase/functions/resolve-deployment-configs/index.ts",
+      "sha256": "290a407de7c3e9028b66545cc78cc8ecaeadca1800e37dafdb6ca3a751e8c01e"
+    },
+    {
+      "path": "supabase/functions/validate-deployment-handoff/index.ts",
+      "sha256": "69dc119b88544955c55f9d8ddc34c9ec290a0e498909d4eb0b540277d249391a"
+    },
+    {
+      "path": "supabase/migrations/001_phase3_deployer_tables.sql",
+      "sha256": "09cf72d7b46b993471bb76631f871bc7f4ad2728c7f3d9472e22f32820fefd07"
+    },
+    {
+      "path": "supabase/migrations/002_phase3_indexes.sql",
+      "sha256": "8f73569b3879c5b8d265f19fc2b5476db6c6ffba7a88661711575822f01a4041"
+    },
+    {
+      "path": "supabase/migrations/003_phase3_triggers.sql",
+      "sha256": "12956011f3b2b4d4c3c9e0ac52c6a3729c73813ba5e55e565b29077f491747ab"
+    },
+    {
+      "path": "supabase/migrations/004_phase3_rls.sql",
+      "sha256": "8eeaadab615789b1d9ad1d55b053793ae8061baa8834c4f348f7b1f0b93af4ea"
+    },
+    {
+      "path": "supabase/migrations/005_source_evidence_layer.sql",
+      "sha256": "74d1830e73a11c958688c56dfaedf685724ba06a2e801c8f3d9f9d87b665b669"
+    },
+    {
+      "path": "templates/README.automation.template.md",
+      "sha256": "49361ed3b6ae56a27dfa47c481c0a81f12f6236ee7e0790e0cfff0b0b7ad43b7"
+    },
+    {
+      "path": "templates/SKILL.template.md",
+      "sha256": "f358c0fa7398c4e28a522b493f38f6b3a0ce84d22339bfd7b38d60447fd22030"
+    },
+    {
+      "path": "templates/deployment-plan.template.json",
+      "sha256": "ed801edf6e79fd92ec96748fe4d0a8ec6db2a33ab991a82504b47ac7ee21e9f2"
+    },
+    {
+      "path": "templates/handoff-to-deployer.template.json",
+      "sha256": "7b3fe8152af3e847693aa08acd03ffe7fed7661338c79a99a92b8e57082b4cde"
+    },
+    {
+      "path": "templates/validation-report.template.json",
+      "sha256": "af0f6ff2bdf2fde65bca540a62195805258d0e522fd72696da0255dfaa3d6eda"
+    }
+  ]
+}

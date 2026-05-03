@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "required": [
+    "validation_status",
+    "passed_checks",
+    "failed_checks",
+    "blocking_pending_configs"
+  ]
+}
