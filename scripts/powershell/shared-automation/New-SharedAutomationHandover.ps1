@@ -3,7 +3,7 @@
 Creates an initial handover file for a shared automation.
 
 .DESCRIPTION
-Local-only helper. It writes handover/{automation_key}-HANDOVER.md.
+Local-only helper. It writes handover/automations/{automation_key}-HANDOVER.md by default.
 It does not call Supabase, does not run final tests, and does not activate automations.
 #>
 
@@ -27,7 +27,7 @@ if ($AutomationKey -notmatch '^[a-z0-9][a-z0-9-]*[a-z0-9]$') {
 }
 
 if ([string]::IsNullOrWhiteSpace($OutputPath)) {
-    $OutputPath = Join-Path -Path "handover" -ChildPath "$AutomationKey-HANDOVER.md"
+    $OutputPath = Join-Path -Path (Join-Path -Path "handover" -ChildPath "automations") -ChildPath "$AutomationKey-HANDOVER.md"
 }
 
 if ((Test-Path -LiteralPath $OutputPath) -and -not $Force) {
@@ -40,6 +40,7 @@ $ReadmePath = "$RepositoryPath/README.md"
 $AgentPath = "$RepositoryPath/agents/orchestrator.md"
 $SkillPath = "$RepositoryPath/skills/$DefaultSkillKey/SKILL.md"
 $RulePath = "$RepositoryPath/routing-rules/default-runtime-route.json"
+$HandoverPath = "handover/automations/$AutomationKey-HANDOVER.md"
 
 $Lines = @(
     "# $AutomationName - Operational Handover",
@@ -50,6 +51,8 @@ $Lines = @(
     "",
     "```text",
     "docs/01-ai-context-router.md",
+    "docs/25-ai-block-execution-procedure.md",
+    "docs/26-ai-autonomous-action-allowlist.md",
     "docs/23-shared-automation-handover-checklist.md",
     "```",
     "",
@@ -63,6 +66,7 @@ $Lines = @(
     "project_ref = $ProjectRef",
     "repository = $Repository",
     "repository_path = $RepositoryPath",
+    "handover_path = $HandoverPath",
     "```",
     "",
     "## Current build state",
@@ -84,6 +88,7 @@ $Lines = @(
     "agent_paths = $AgentPath",
     "skill_paths = $SkillPath",
     "routing_rules_path = $RulePath",
+    "handover_path = $HandoverPath",
     "```",
     "",
     "## Supabase evidence",
@@ -116,6 +121,13 @@ $Lines = @(
     "",
     "```powershell",
     ".\scripts\powershell\shared-automation\Get-SharedAutomationVerificationSql.ps1 -AutomationKey '$AutomationKey'",
+    "```",
+    "",
+    "## Autonomous execution policy",
+    "",
+    "```text",
+    "Routine GitHub, README, PR, comment and Supabase-script actions are automatic inside an approved block.",
+    "See docs/26-ai-autonomous-action-allowlist.md.",
     "```",
     "",
     "## Construction checklist",
