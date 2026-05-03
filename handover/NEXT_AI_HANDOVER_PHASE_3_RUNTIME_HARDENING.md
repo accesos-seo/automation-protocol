@@ -1,8 +1,76 @@
 # Handover para siguiente IA - Fase 3 Runtime Hardening
 
+## Prompt de arranque para la siguiente IA
+
+Usar este texto para iniciar una nueva ventana o sesión:
+
+```text
+Continúa el proyecto `accesos-seo/automation-protocol`. No reinicies el diagnóstico.
+
+Primero lee en GitHub estos archivos:
+
+1. `handover/NEXT_AI_HANDOVER_PHASE_3_RUNTIME_HARDENING.md`
+2. `docs/12-phase-3-sync-report.md`
+3. `handover/PHASE_3_RUNTIME_ACTIVE.md`
+4. `protocol.config.json`
+5. `docs/05-github-vs-supabase-residency-map.md`
+
+Contexto: Fase 3 ya fue sincronizada entre Supabase y GitHub. El repo ya es privado. El runtime real de Supabase ya fue descargado, versionado y fusionado a `main`. El siguiente trabajo es `phase-3-runtime-hardening`: crear una ruta determinística de validación para que una prueba controlada termine en `runtime.execution_completed` sin depender del fallback.
+
+Regla de trabajo: usa PowerShell paso a paso. No pidas secretos en el chat. No pegues ni solicites service_role keys, tokens personales ni claves reales. Documenta automáticamente cada avance importante en el repositorio, actualizando este handover o creando un informe nuevo en `docs/` o `handover/`.
+```
+
 ## Propósito de este handover
 
 Este documento entrega el contexto completo para que otra IA pueda continuar el trabajo sin reiniciar el diagnóstico. El proyecto ya pasó por sincronización entre Supabase y GitHub. El siguiente objetivo es endurecer el runtime para reducir la dependencia del fallback y lograr una ejecución estable terminando en `runtime.execution_completed`.
+
+## Regla permanente de documentación continua
+
+Cada IA que continúe este proyecto debe documentar los avances importantes sin esperar a que el operador lo pida.
+
+La regla es:
+
+```text
+Todo cambio relevante debe quedar versionado en GitHub y resumido en un documento de continuidad.
+```
+
+La IA debe documentar especialmente:
+
+- cambios de arquitectura;
+- nuevas ramas creadas;
+- commits importantes;
+- Pull Requests abiertos o fusionados;
+- cambios en Supabase Edge Functions;
+- cambios en migraciones, policies o tablas;
+- resultados de pruebas runtime;
+- errores relevantes y cómo se resolvieron;
+- decisiones de seguridad;
+- próximos pasos y criterios de aceptación.
+
+Ubicación recomendada para la documentación:
+
+```text
+docs/
+handover/
+```
+
+Convención recomendada:
+
+```text
+docs/13-phase-3-runtime-hardening-report.md
+handover/NEXT_AI_HANDOVER_<FASE_O_TAREA>.md
+```
+
+Al terminar un bloque de trabajo, la IA debe dejar preparado el siguiente handover con:
+
+1. estado alcanzado;
+2. archivos tocados;
+3. commits/PRs;
+4. comandos útiles ya validados;
+5. errores encontrados;
+6. riesgos pendientes;
+7. próximo paso exacto;
+8. prompt de arranque para la siguiente IA.
 
 ## Proyecto
 
@@ -228,6 +296,36 @@ El siguiente bloque se considera exitoso si:
 - El fallback sigue existiendo y funciona ante errores del proveedor IA.
 - No se versionan secretos.
 - Supabase `runtime_events` registra evidencia clara del flujo.
+
+## Hoja de ruta de documentación obligatoria
+
+Durante `phase-3-runtime-hardening`, la siguiente IA debe crear o actualizar al menos estos documentos:
+
+```text
+docs/13-phase-3-runtime-hardening-report.md
+handover/NEXT_AI_HANDOVER_AFTER_RUNTIME_HARDENING.md
+```
+
+`docs/13-phase-3-runtime-hardening-report.md` debe incluir:
+
+- rama usada;
+- archivos modificados;
+- descripción del parche determinístico;
+- comandos PowerShell ejecutados;
+- resultado de deploy;
+- eventos observados en `runtime_events`;
+- prueba exitosa o motivo de bloqueo;
+- riesgos pendientes.
+
+`handover/NEXT_AI_HANDOVER_AFTER_RUNTIME_HARDENING.md` debe incluir:
+
+- estado final del bloque;
+- siguiente objetivo;
+- prompt de arranque actualizado;
+- comandos exactos para continuar;
+- referencias a informes generados.
+
+Si el trabajo no llega a completarse, igualmente debe documentarse el estado parcial y el bloqueo exacto.
 
 ## Comandos útiles ya validados
 
