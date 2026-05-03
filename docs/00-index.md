@@ -17,6 +17,7 @@ final_tests_for_new_automations = deferred
 powershell_scripts = built
 verification_sql_script = built
 handover_checklist = built
+ai_handover = built
 ```
 
 ## Lectura rápida
@@ -26,6 +27,8 @@ Para entender el estado actual del sistema:
 ```text
 README.md
 docs/01-ai-context-router.md
+docs/00-index.md
+docs/24-ai-handover-next-steps.md
 docs/18-shared-automation-build-pipeline.md
 docs/19-shared-automation-operational-flow.md
 docs/20-shared-automation-powershell-operator-guide.md
@@ -37,12 +40,13 @@ Leer en este orden:
 
 ```text
 1. docs/01-ai-context-router.md
-2. docs/18-shared-automation-build-pipeline.md
-3. docs/19-shared-automation-operational-flow.md
-4. docs/20-shared-automation-powershell-operator-guide.md
-5. docs/23-shared-automation-handover-checklist.md
-6. automations/_template/README.md
-7. handover/_template-AUTOMATION-HANDOVER.md
+2. docs/24-ai-handover-next-steps.md
+3. docs/18-shared-automation-build-pipeline.md
+4. docs/19-shared-automation-operational-flow.md
+5. docs/20-shared-automation-powershell-operator-guide.md
+6. docs/23-shared-automation-handover-checklist.md
+7. automations/_template/README.md
+8. handover/_template-AUTOMATION-HANDOVER.md
 ```
 
 Scripts asociados:
@@ -139,6 +143,14 @@ docs/23-shared-automation-handover-checklist.md
 ```
 
 Define la evidencia mínima que debe quedar documentada por cada automatización.
+
+### 24 - AI Handover and Next Steps
+
+```text
+docs/24-ai-handover-next-steps.md
+```
+
+Define instrucciones para una nueva IA, estado actual, rutas de contexto y próximos pasos.
 
 ## Funciones Edge del pipeline compartido
 
@@ -249,7 +261,8 @@ nunca tablas públicas
 Continuar con:
 
 ```text
-actualizar README con scripts oficiales mínimos
-crear scaffold de handover generado por automation_key
+crear script PowerShell New-SharedAutomationHandover.ps1
+actualizar handover/_template-AUTOMATION-HANDOVER.md
+actualizar docs/23 con el nuevo script
 crear script para preparar carpeta automations/{automation_key} localmente
 ```
