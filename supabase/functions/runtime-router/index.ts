@@ -1,4 +1,4 @@
-const corsHeaders = {
+﻿const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -73,12 +73,35 @@ function fallbackDecision(reason: string, details?: unknown) {
       human_intervention_needed: true,
       used_fallback: true,
       fallback_reason: reason,
-      reasoning: "Fallback técnico: OpenRouter no produjo una decisión utilizable. Se ejecuta intake-analysis por defecto para mantener continuidad operativa.",
+      reasoning: "Fallback tÃ©cnico: OpenRouter no produjo una decisiÃ³n utilizable. Se ejecuta intake-analysis por defecto para mantener continuidad operativa.",
     },
     fallback: { reason, details: typeof details === "string" ? details.slice(0, 4000) : details ?? null },
   };
 }
 
+function isDeterministicHardeningInput(input: JsonRecord, eventType: string): boolean {
+  return input?.runtime_validation_mode === "deterministic_hardening" || eventType === "runtime.hardening.validation";
+}
+
+function deterministicHardeningDecision(input: JsonRecord) {
+  const requestedSkill =
+    typeof input?.skill_key === "string" && input.skill_key.trim().length > 0
+      ? input.skill_key
+      : "intake-analysis";
+
+  return {
+    decision: {
+      next_step: "execute_skill",
+      skill_to_execute: requestedSkill,
+      agent_to_execute: "intake-specialist",
+      human_intervention_needed: false,
+      used_fallback: false,
+      deterministic_route: true,
+      reasoning:
+        "Ruta deterministica de hardening activada para validacion controlada; no depende del proveedor externo y debe cerrar como runtime.execution_completed.",
+    },
+  };
+}
 function extractNextStep(result: any): string | null {
   return result?.decision?.next_step || result?.next_step || null;
 }
@@ -193,7 +216,23 @@ Deno.serve(async (req) => {
       instruction: "Decide el siguiente paso runtime. Si falla el modelo, ejecutar intake-analysis por fallback.",
     };
 
-    const orchestrationResult = await callOpenRouter(runtimeContext);
+    const deterministicRoute = isDeterministicHardeningInput(input, eventType);
+    const orchestrationResult = deterministicRoute
+      ? deterministicHardeningDecision(input)
+      : await callOpenRouter(runtimeContext);
+
+    if (deterministicRoute) {
+      await insertRuntimeEvent({
+        automation_key: automationKey,
+        execution_task_id: task.id,
+        automation_id: automation.id,
+        event_type: "runtime.deterministic_route_used",
+        event_payload: {
+          mode: "deterministic_hardening",
+          skill_key: extractSkillToExecute(orchestrationResult),
+        },
+      });
+    }
     const usedFallback = orchestrationResult?.decision?.used_fallback === true;
     if (usedFallback) await insertRuntimeEvent({ automation_key: automationKey, execution_task_id: task.id, automation_id: automation.id, event_type: "runtime.openrouter_fallback_used", event_payload: orchestrationResult });
 
@@ -202,23 +241,30 @@ Deno.serve(async (req) => {
     let skillExecutionResult = null;
 
     if (nextStep === "execute_skill" && skillToExecute) {
-      await insertRuntimeEvent({ automation_key: automationKey, execution_task_id: task.id, automation_id: automation.id, event_type: "runtime.skill_execution_requested", event_payload: { skill_key: skillToExecute, used_fallback: usedFallback } });
+      await insertRuntimeEvent({ automation_key: automationKey, execution_task_id: task.id, automation_id: automation.id, event_type: "runtime.skill_execution_requested", event_payload: { skill_key: skillToExecute, used_fallback: usedFallback, deterministic_route: deterministicRoute } });
       skillExecutionResult = await callSkillExecutor({ automationKey, skillKey: skillToExecute, input, parentTaskId: task.id });
     }
 
-    const finalOutput = { orchestration: orchestrationResult, skill_execution: skillExecutionResult, completed_with_fallback: usedFallback };
+    const skillCompletedWithFallback = skillExecutionResult?.completed_with_fallback === true;
+    const completedWithFallback = usedFallback || skillCompletedWithFallback;
+    const finalOutput = {
+      orchestration: orchestrationResult,
+      skill_execution: skillExecutionResult,
+      completed_with_fallback: completedWithFallback,
+      deterministic_route: deterministicRoute,
+    };
     await dbPatch("execution_tasks", task.id, {
       task_status: "completed",
       status: "completed",
       output_payload: finalOutput,
       output_data: finalOutput,
-      error_message: usedFallback ? `completed_with_fallback: ${orchestrationResult?.fallback?.reason || "unknown"}` : null,
+      error_message: completedWithFallback ? `completed_with_fallback: ${orchestrationResult?.fallback?.reason || skillExecutionResult?.result?.fallback?.reason || "unknown"}` : null,
       completed_at: new Date().toISOString(),
     });
 
-    await insertRuntimeEvent({ automation_key: automationKey, execution_task_id: task.id, automation_id: automation.id, event_type: usedFallback ? "runtime.execution_completed_with_fallback" : "runtime.execution_completed", event_payload: finalOutput });
+    await insertRuntimeEvent({ automation_key: automationKey, execution_task_id: task.id, automation_id: automation.id, event_type: completedWithFallback ? "runtime.execution_completed_with_fallback" : "runtime.execution_completed", event_payload: finalOutput });
 
-    return jsonResponse({ ok: true, automation_key: automationKey, task_id: task.id, completed_with_fallback: usedFallback, orchestration: orchestrationResult, skill_execution: skillExecutionResult });
+    return jsonResponse({ ok: true, automation_key: automationKey, task_id: task.id, completed_with_fallback: completedWithFallback, deterministic_route: deterministicRoute, orchestration: orchestrationResult, skill_execution: skillExecutionResult });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     if (taskId) await dbPatch("execution_tasks", taskId, { task_status: "failed", status: "failed", error_message: errorMessage, completed_at: new Date().toISOString() });
@@ -226,3 +272,4 @@ Deno.serve(async (req) => {
     return jsonResponse({ ok: false, automation_key: automationKey, task_id: taskId, error: errorMessage }, 500);
   }
 });
+
