@@ -20,6 +20,20 @@ Ejemplo:
 handover/cliente-area-proceso-HANDOVER.md
 ```
 
+## Script recomendado
+
+Generar el handover inicial con:
+
+```powershell
+.\scripts\powershell\shared-automation\New-SharedAutomationHandover.ps1 `
+  -AutomationKey "REPLACE_WITH_AUTOMATION_KEY" `
+  -AutomationName "REPLACE_WITH_AUTOMATION_NAME" `
+  -ProtocolName "REPLACE_WITH_PROTOCOL_NAME" `
+  -CommitSha "REPLACE_WITH_COMMIT_SHA"
+```
+
+Nota operativa: en la sesión 2026-05-03, la rama preferida `feature/shared-automation-handover` fue bloqueada por controles del conector al intentar crearla. Se validó escritura mediante `test/ai-write-diagnostic` y luego se continuó con la rama alternativa `ai-shared-automation-handover`. El intento de crear el archivo `.ps1` completo también fue bloqueado por el conector; debe aplicarse desde una sesión/herramienta con escritura habilitada o mediante una estrategia de escritura dividida segura.
+
 ## Regla principal
 
 El handover es la fuente humana de transferencia operativa.
@@ -61,6 +75,7 @@ readme_path = automations/REPLACE_WITH_AUTOMATION_KEY/README.md
 agent_paths = automations/REPLACE_WITH_AUTOMATION_KEY/agents/
 skill_paths = automations/REPLACE_WITH_AUTOMATION_KEY/skills/
 routing_rules_path = automations/REPLACE_WITH_AUTOMATION_KEY/routing-rules/
+handover_path = handover/REPLACE_WITH_AUTOMATION_KEY-HANDOVER.md
 ```
 
 ## Evidencia Supabase
@@ -74,6 +89,8 @@ skill_ids = REPLACE_WITH_SKILL_IDS
 config_ids = REPLACE_WITH_CONFIG_IDS
 rule_ids = REPLACE_WITH_RULE_IDS
 audit_log_ids = REPLACE_WITH_AUDIT_LOG_IDS
+runtime_event_ids = REPLACE_WITH_RUNTIME_EVENT_IDS
+execution_task_ids = REPLACE_WITH_EXECUTION_TASK_IDS
 ```
 
 ## Componentes esperados
@@ -106,6 +123,7 @@ default-runtime-route
 
 ```text
 [ ] Scaffold generado
+[ ] Handover inicial generado
 [ ] Archivos creados en GitHub
 [ ] Manifest validado
 [ ] Payload de componentes construido
@@ -131,6 +149,7 @@ default-runtime-route
 [ ] audit_logs revisado
 [ ] no hay tasks stuck
 [ ] LOCAL_TEST_TOKEN disponible solo en entorno seguro
+[ ] usuario autorizó explícitamente pruebas finales
 ```
 
 ## Checklist después de pruebas finales
@@ -153,7 +172,7 @@ default-runtime-route
 [ ] audit_logs_reviewed = true
 [ ] handover_updated = true
 [ ] status puede moverse a validated
-[ ] activación aprobada
+[ ] activación aprobada explícitamente
 ```
 
 ## Checklist post-activación

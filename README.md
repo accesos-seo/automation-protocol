@@ -81,12 +81,14 @@ docs/00-index.md
 docs/18-shared-automation-build-pipeline.md
 docs/19-shared-automation-operational-flow.md
 docs/20-shared-automation-powershell-operator-guide.md
+docs/23-shared-automation-handover-checklist.md
 ```
 
 ## Scripts principales
 
 ```text
 scripts/powershell/shared-automation/New-SharedAutomationScaffold.ps1
+scripts/powershell/shared-automation/New-SharedAutomationHandover.ps1
 scripts/powershell/shared-automation/Register-SharedAutomationFromManifest.ps1
 scripts/powershell/shared-automation/Get-SharedAutomationVerificationSql.ps1
 ```
@@ -95,6 +97,7 @@ scripts/powershell/shared-automation/Get-SharedAutomationVerificationSql.ps1
 
 ```text
 automations/_template/
+automations/example-shared-automation/
 handover/_template-AUTOMATION-HANDOVER.md
 examples/shared-automation/example-manifest.json
 ```
