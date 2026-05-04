@@ -1,0 +1,10 @@
+﻿{
+    "automation_key":  "_template",
+    "skill_key":  "technical-deployment",
+    "version":  "0.1.0",
+    "source_path":  "automations\\_template\\skills\\technical-deployment\\SKILL.md",
+    "runtime_bucket":  "skills",
+    "runtime_package_path":  "_template/technical-deployment/0.1.0/skill.zip",
+    "sha256":  "83d18e66d48c7e31e29aa6fb9ddd4e1e1d2f4af61aa30ac9dd8475ca03c35da9",
+    "generated_at_utc":  "2026-05-03T23:42:22.5377802Z"
+}

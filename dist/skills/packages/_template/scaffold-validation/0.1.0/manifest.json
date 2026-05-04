@@ -1,0 +1,10 @@
+﻿{
+    "automation_key":  "_template",
+    "skill_key":  "scaffold-validation",
+    "version":  "0.1.0",
+    "source_path":  "automations\\_template\\skills\\scaffold-validation\\SKILL.md",
+    "runtime_bucket":  "skills",
+    "runtime_package_path":  "_template/scaffold-validation/0.1.0/skill.zip",
+    "sha256":  "873ba2f27f4570b71ecc4fc53e056b66eb318f578118fea5f4fede1ed182247b",
+    "generated_at_utc":  "2026-05-03T23:42:22.3467851Z"
+}

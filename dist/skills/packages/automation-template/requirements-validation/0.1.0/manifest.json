@@ -1,0 +1,10 @@
+﻿{
+    "automation_key":  "automation-template",
+    "skill_key":  "requirements-validation",
+    "version":  "0.1.0",
+    "source_path":  "automations\\automation-template\\skills\\requirements-validation\\SKILL.md",
+    "runtime_bucket":  "skills",
+    "runtime_package_path":  "automation-template/requirements-validation/0.1.0/skill.zip",
+    "sha256":  "332a77a9bc18812b4b6e7526af903feacf12df4b40ef9f8b9b58c495b259b383",
+    "generated_at_utc":  "2026-05-03T23:42:23.0397846Z"
+}

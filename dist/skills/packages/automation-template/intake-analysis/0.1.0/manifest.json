@@ -1,0 +1,10 @@
+﻿{
+    "automation_key":  "automation-template",
+    "skill_key":  "intake-analysis",
+    "version":  "0.1.0",
+    "source_path":  "automations\\automation-template\\skills\\intake-analysis\\SKILL.md",
+    "runtime_bucket":  "skills",
+    "runtime_package_path":  "automation-template/intake-analysis/0.1.0/skill.zip",
+    "sha256":  "cf0a6cb3ded74a2f1ba7abf406544aad4f802c704a9b88f82eb7efd484d9ca57",
+    "generated_at_utc":  "2026-05-03T23:42:22.8147847Z"
+}

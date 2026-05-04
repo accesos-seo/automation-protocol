@@ -1,0 +1,10 @@
+﻿{
+    "automation_key":  "_template",
+    "skill_key":  "web-source-capture",
+    "version":  "0.1.0",
+    "source_path":  "automations\\_template\\skills\\web-source-capture\\SKILL.md",
+    "runtime_bucket":  "skills",
+    "runtime_package_path":  "_template/web-source-capture/0.1.0/skill.zip",
+    "sha256":  "eac5e295d19ca5e8264f35f8018b3c14142405962c17e5e8dc2b96710d09749c",
+    "generated_at_utc":  "2026-05-03T23:42:22.6767857Z"
+}
