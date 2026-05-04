@@ -1,0 +1,1541 @@
+Este handover reemplaza el contexto disperso de la sesión actual y deja documentado el avance del proyecto Skills Swarm / Automation Protocol desde Fase 2 hacia Fase 3.
+
+Cubre:
+
+Cierre operativo de Fase 2 con scaffold registrado.
+
+Creación y trazabilidad del deployment job de Fase 3.
+
+Detección y corrección de inventario técnico incompleto.
+
+Bloqueo correcto de runtime real por activación requerida.
+
+Creación de endpoint no productivo runtime-validation-only.
+
+Validación no productiva aprobada con activation_guarded=true.
+
+Pendiente exacto para cerrar Fase 3 guardada sin activar producción.
+
+Sirve para que la siguiente IA continúe sin repetir auditorías ya hechas, sin intentar activar producción y sin asumir que la automatización está activa.
+
+Regla de idioma
+
+assistant_response_language = españoltechnical_file_language = mantener idioma existente salvo instrucción contraria
+
+Lectura obligatoria para la siguiente IA
+
+Antes de tocar algo, revisar:
+
+README.md
+
+Skills Swarm Automation Pipeline.md
+
+Base_de_Conocimiento_PowerShell_Supabase_Runtime.docx
+
+Prompt-Hand-Over.txt
+
+protocol.config.json
+
+MANIFEST.sha256.json
+
+Base de datos.txt
+
+Handover actual de Fase 3 validation-only
+
+Supabase:
+
+project_ref: lwurzjrghzwzxbhrulyn
+
+Tablas críticas:
+
+public.automation_protocols
+
+public.scaffold_jobs
+
+public.scaffold_files
+
+public.scaffold_artifacts
+
+public.scaffold_validation_reports
+
+public.automation_registry
+
+public.agent_registry
+
+public.skill_registry
+
+public.automation_rules
+
+public.deployment_configs
+
+public.deployment_jobs
+
+public.deployment_logs
+
+public.execution_tasks
+
+public.runtime_events
+
+public.phase_events
+
+public.event_types
+
+Edge Functions críticas:
+
+runtime-router
+
+skill-executor
+
+create-shared-automation
+
+runtime-validation-only
+
+GitHub:
+
+repo: accesos-seo/automation-protocolbranch local observada anteriormente: phase-3-runtime-hardening-runtime-patchbranch remota principal: main
+
+Archivos fuente autorizados para inventario shared runtime:
+
+automations/example-shared-automation/deployment/manifest.json
+
+automations/example-shared-automation/routing-rules/default-runtime-route.json
+
+Política de autonomía vigente
+
+El usuario autorizó trabajo por bloques con comandos como:
+
+gosíadelantecontinúahazlosigueejecuta
+
+Interpretación vigente:
+
+Cuando el usuario diga uno de esos comandos, se puede avanzar al siguiente bloque planificado.
+
+Cada bloque debe tener:
+
+objetivo cerrado
+
+resultado verificable
+
+no abrir tareas laterales
+
+no hacer tareas por hacer
+
+actuar como arquitecto/organizador del plan, no como explorador sin rumbo
+
+Acciones permitidas automáticamente dentro de un bloque aprobado
+
+Permitido dentro de un bloque aprobado:
+
+SELECT y auditorías no destructivas.
+
+Revisión de Edge Functions.
+
+Revisión de tablas y esquemas.
+
+Inserción de logs, eventos y tareas de evidencia cuando corresponda.
+
+Fixes no destructivos y trazables.
+
+Registro de inventario técnico si existe fuente autorizada.
+
+Actualización de estados intermedios no productivos.
+
+Despliegue de función validation-only si no activa producción.
+
+Validaciones controladas sin exponer secretos.
+
+Documentación de resultados.
+
+Commits documentales si el usuario lo aprueba dentro del bloque.
+
+Scripts de verificación no destructivos.
+
+Pruebas controladas contra funciones no productivas.
+
+Acciones que requieren parada o autorización explícita
+
+Detenerse y pedir autorización explícita antes de:
+
+DROP.
+
+TRUNCATE.
+
+Borrados masivos.
+
+Cambios RLS sensibles.
+
+Exponer secretos.
+
+Leer, imprimir o pegar service_role keys, tokens o claves reales.
+
+Cambiar activation_guarded=false.
+
+Activar producción.
+
+Cambiar automation_registry.status a active.
+
+Escribir activated_at.
+
+Crear costos externos.
+
+Llamar proveedores externos con costo si no estaba aprobado.
+
+Rotar secretos.
+
+Desactivar verify_jwt en funciones productivas.
+
+Ejecutar runtime productivo real.
+
+Ejecutar runtime-router o skill-executor productivo sin autorización explícita.
+
+Hacer reset hard de Git local sin confirmación del usuario.
+
+Arquitectura base recordada
+
+Residencia del sistema:
+
+GitHub = fuente técnica versionadaSupabase DB = fuente operativa/runtimeSupabase Edge Functions = ejecución runtimeSupabase Storage = paquetes runtime/evidenciaSupabase Secrets = secretos realesLocal Windows = copia de trabajo/operador
+
+Regla de seguridad permanente:
+
+Los secretos reales viven en Supabase Secrets o backend controlado.No deben guardarse en PowerShell, frontend, documentación, tablas públicas ni GitHub.
+
+Pipeline:
+
+Skills Swarm Form→ Fase 1 Intake / Specialist→ Fase 2 Constructor Scaffold→ Fase 3 Technical Deployer→ Automation Active
+
+Estado actual:
+
+No estamos en Automation Active.Estamos en Fase 3 validada en modo no productivo y guardado.
+
+Estado del repositorio / GitHub
+
+Repositorio:
+
+accesos-seo/automation-protocol
+
+Branch local observada durante la sesión:
+
+phase-3-runtime-hardening-runtime-patch
+
+Branch principal revisada:
+
+main
+
+Archivo eliminado previamente confirmado en GitHub:
+
+handover/Registros_Historicos/2026/05-Mayo/2026-05-04_00-24_Local_Test_Token_Fallback_Deployed.md
+
+Commit de eliminación confirmado previamente:
+
+2c4e963db6b1d83bc850c8e025fbd9aa5958f193
+
+Archivos usados como fuente autorizada para materializar inventario:
+
+automations/example-shared-automation/deployment/manifest.jsonautomations/example-shared-automation/routing-rules/default-runtime-route.json
+
+No se realizó commit nuevo en GitHub durante el avance de Fase 3 de esta sesión.
+
+Cambios aplicados principalmente en:
+
+Supabase DB
+
+Supabase Edge Functions
+
+registros operativos de evidencia
+
+Estado Supabase
+
+Proyecto Supabase:
+
+project_ref: lwurzjrghzwzxbhrulyn
+
+Protocolo principal:
+
+protocol_id: 68855189-fddf-4b12-b0c9-eb5d9b83234aproject_id: b9236946-35f2-4b01-b0c9-05f7ff57c95cwitness_id: 2bc941e8-de10-4000-a169-1304e0878703
+
+Estado del protocolo:
+
+automation_protocols.status = ready_for_scaffoldspecialist_decision = approve_interpretationhandoff_ready_for_scaffold = true
+
+Scaffold job:
+
+scaffold_job_id: 109d9a59-854e-46bd-a11c-9b055667745cscaffold_job_status: scaffold_completed
+
+Automation objetivo:
+
+automation_id: 3bd46a6d-fcdb-4a15-86c9-1dfc1c443535automation_key: validation-shared-runtime-002automation_status: scaffoldedhealth_status: pending_validationactivation_guarded: trueactivated_at: null
+
+Deployment job:
+
+deployment_job_id: 8d9d3648-8b25-42a8-a3c2-1a9aa60c816bdeployment_status: validation_only_passed_guardedblocking_reason: nullpending_configs: []
+
+Inventario técnico final:
+
+agent_registry:
+
+agent_key: orchestrator
+
+automation_key: validation-shared-runtime-002
+
+runtime_function: runtime-router
+
+skill_registry:
+
+skill_key: intake-analysis
+
+automation_key: validation-shared-runtime-002
+
+automation_rules:
+
+rule_key: default-runtime-route
+
+route.entry_agent = orchestrator
+
+route.default_skill = intake-analysis
+
+route.runtime_function = runtime-router
+
+route.skill_executor_function = skill-executor
+
+guards.activation_guarded = true
+
+guards.controlled_activation_required = true
+
+Config requerida:
+
+OPENROUTER_API_KEYconfig_status = managed_in_supabase_secrets
+
+No se leyó ni expuso el valor real del secreto.
+
+Estado Storage / Skills / Runtime, si aplica
+
+Durante esta sesión no se modificaron objetos de Supabase Storage.
+
+Estado relevante conocido:
+
+skill_registry tiene skill intake-analysis registrada para validation-shared-runtime-002.
+
+runtime_location = githubruntime_bucket = noneruntime_package_path = null
+
+La validación no productiva se hizo contra estructura DB/routing/inventario, no contra paquete runtime en Storage.
+
+Storage queda como:
+
+PENDIENTE_DE_CONFIRMAR si existen paquetes runtime productivos asociados a validation-shared-runtime-002.
+
+Estado de Edge Functions, si aplica
+
+Funciones críticas existentes y activas:
+
+runtime-router: ACTIVE, verify_jwt=trueskill-executor: ACTIVE, verify_jwt=truecreate-shared-automation: ACTIVE, verify_jwt=true
+
+Hallazgo importante:
+
+runtime-router exige automation_registry.status = active.skill-executor exige automation_registry.status = active.
+
+Por eso no se ejecutó runtime real.
+
+La automation sigue:
+
+status = scaffoldedactivation_guarded = trueactivated_at = null
+
+Función nueva desplegada:
+
+runtime-validation-onlystatus: ACTIVEverify_jwt: trueversion: 1edge_function_id: 24d23f60-c97b-49da-9fd6-0b1bd405e91cezbr_sha256: 46b9ae6232e60ec05f8d3e1600d103a2f1a07bb58d82e5fefcefa4de745d3bb6
+
+Propósito de runtime-validation-only:
+
+Validar estructura runtime sin exigir automation.status = active.
+
+No llama OpenRouter.
+
+No llama skill-executor productivo.
+
+No cambia activation_guarded.
+
+No activa producción.
+
+Evidencia creada durante la sesión
+
+Fase 2:
+
+scaffold_job_id: 109d9a59-854e-46bd-a11c-9b055667745cscaffold_files: 6scaffold_artifacts: 6scaffold_validation_reports: 1phase_event scaffold.completed: 1
+
+Fase 3 deployment:
+
+deployment_job_id: 8d9d3648-8b25-42a8-a3c2-1a9aa60c816b
+
+Inventario:
+
+agent_key: orchestratorskill_key: intake-analysisrule_key: default-runtime-route
+
+Validation-only:
+
+edge_function: runtime-validation-onlyexecution_task_id: a49c15e5-8275-4804-96b9-aab4b15f8119runtime_event_id: 2832fe16-6a79-414f-9e5d-bd2d6c76bf1ddeployment_log_id: 422d6226-c377-4fa7-afca-4de5031191ec
+
+Contadores finales verificados:
+
+runtime_event_count: 1execution_task_count: 1deployment_log_count: 5
+
+Estado final verificado:
+
+deployment_status: validation_only_passed_guardedautomation_status: scaffoldedhealth_status: pending_validationactivation_guarded: trueactivated_at: nullblocking_reason: nullpending_configs: []
+
+Incidentes resueltos durante la sesión
+
+1. Fase 2 sin scaffold job ni artefactos
+
+Causa:
+
+El protocolo estaba aprobado para scaffold, pero no existían scaffold_jobs, scaffold_files, scaffold_artifacts ni scaffold_validation_reports asociados.
+
+Fix aplicado:
+
+Se creó scaffold_job controlado.
+
+Se registraron 6 scaffold_files.
+
+Se registraron 6 scaffold_artifacts.
+
+Se creó 1 scaffold_validation_report.
+
+Se creó evento scaffold.completed.
+
+Evidencia:
+
+scaffold_job_status = scaffold_completed
+
+2. Automation sin trazabilidad hacia protocolo/scaffold
+
+Causa:
+
+validation-shared-runtime-002 existía en automation_registry pero tenía protocol_id, project_id y witness_id en null.
+
+Fix aplicado:
+
+Se enlazó validation-shared-runtime-002 con:
+
+protocol_id = 68855189-fddf-4b12-b0c9-eb5d9b83234aproject_id = b9236946-35f2-4b01-b0c9-05f7ff57c95cwitness_id = 2bc941e8-de10-4000-a169-1304e0878703
+
+Resultado:
+
+Trazabilidad mínima corregida.activation_guarded se mantuvo true.
+
+3. Fase 3 sin deployment job
+
+Causa:
+
+No existía deployment_job para validation-shared-runtime-002.
+
+Fix aplicado:
+
+Se creó deployment_job en modo controlado.
+
+deployment_job_id = 8d9d3648-8b25-42a8-a3c2-1a9aa60c816b
+
+Resultado inicial:
+
+deploy_queued
+
+4. Inventario técnico incompleto
+
+Causa:
+
+validation-shared-runtime-002 no tenía agentes ni skills propios.automation_rules.default-runtime-route tenía default_skill_key inválido: "=".
+
+Fix aplicado:
+
+Se usó fuente autorizada example-shared-automation.
+
+Se registró agente orchestrator.
+
+Se registró skill intake-analysis.
+
+Se corrigió default-runtime-route.
+
+Resultado:
+
+deployment_job pasó a deploy_ready_for_validation.
+
+5. Runtime real bloqueado por activación requerida
+
+Causa:
+
+runtime-router y skill-executor exigen automation_registry.status = active.validation-shared-runtime-002 sigue en status = scaffolded.
+
+Decisión:
+
+No se cambió status a active.No se activó producción.Se registró bloqueo correcto: runtime_validation_blocked_activation_required.
+
+6. Necesidad de validación no productiva
+
+Causa:
+
+Se necesitaba validar estructura runtime sin activar producción.
+
+Fix aplicado:
+
+Se desplegó runtime-validation-only con verify_jwt=true.
+
+Se ejecutó validación equivalente por SQL.
+
+Se registró execution_task.
+
+Se registró runtime_event.
+
+Se registró deployment_log.
+
+Resultado:
+
+deployment_status = validation_only_passed_guarded
+
+Incidentes pendientes
+
+1. Health status aún no refleja validación guardada
+
+Estado actual:
+
+automation_registry.health_status = pending_validationdeployment_jobs.status = validation_only_passed_guarded
+
+Causa probable:
+
+Se cerró la validación en deployment_jobs, pero aún no se actualizó automation_registry.health_status.
+
+Impacto:
+
+La automation está validada en modo no productivo, pero el registry todavía no refleja ese estado.
+
+Próximo paso exacto:
+
+Actualizar automation_registry.health_status a validation_only_passed y status a ready_for_controlled_activation, sin activar producción.
+
+No tocar:
+
+activation_guardedactivated_atstatus active
+
+2. Runtime real no ejecutado
+
+Estado:
+
+runtime real no ejecutado.runtime_event_count real productivo: 0runtime_event_count validation-only: 1
+
+Causa:
+
+runtime-router y skill-executor requieren automation.status=active.
+
+Impacto:
+
+La validación estructural está aprobada, pero la ejecución runtime productiva/controlada aún no fue realizada.
+
+Próximo paso exacto:
+
+Esperar autorización explícita para activación controlada o diseñar flujo temporal de active controlado con rollback.
+
+3. Storage runtime package no confirmado
+
+Estado:
+
+runtime_package_path = null para intake-analysis en validation-shared-runtime-002.
+
+Impacto:
+
+La validación actual no depende de Storage, pero una ejecución runtime real podría requerir revisar paquetes o ruta runtime definitiva.
+
+Próximo paso exacto:
+
+Antes de activación real, verificar si se necesita paquete en Supabase Storage o si el runtime usará GitHub como fuente.
+
+Resultado de pruebas ejecutadas
+
+Prueba 1 — Auditoría Fase 2
+
+Resultado esperado:
+
+Protocolo listo para scaffold y scaffold job existente.
+
+Resultado real inicial:
+
+scaffold_jobs: 0scaffold_files: 0scaffold_artifacts: 0scaffold_validation_reports: 0phase_events: 1
+
+Estado:
+
+Parcial inicial, luego reparado.
+
+Prueba 2 — Reparación Fase 2
+
+Resultado esperado:
+
+scaffold_job y artefactos mínimos existentes.
+
+Resultado real:
+
+scaffold_job_id: 109d9a59-854e-46bd-a11c-9b055667745cscaffold_files: 6scaffold_artifacts: 6validation_reports: 1scaffold_completed_events: 1
+
+Estado:
+
+OK
+
+Prueba 3 — Auditoría inventario Fase 3
+
+Resultado esperado:
+
+Agente, skill, config y routing presentes.
+
+Resultado real inicial:
+
+agent_registry: 0skill_registry: 0deployment_configs: 1automation_rules: 1default_skill_key inválido: "="
+
+Estado:
+
+Falló inicialmente, luego reparado.
+
+Prueba 4 — Materialización inventario
+
+Resultado esperado:
+
+orchestrator, intake-analysis y default-runtime-route válidos.
+
+Resultado real:
+
+agent_count: 1skill_count: 1route_count: 1blocking_reason: nullpending_configs: []
+
+Estado:
+
+OK
+
+Prueba 5 — Auditoría runtime real
+
+Resultado esperado:
+
+Confirmar si runtime-router y skill-executor pueden ejecutarse sin activar automation.
+
+Resultado real:
+
+runtime-router exige automation.status = activeskill-executor exige automation.status = activeautomation.status = scaffolded
+
+Estado:
+
+Bloqueado correctamente por activación requerida.
+
+Prueba 6 — Validation-only
+
+Resultado esperado:
+
+Validar estructura runtime sin activación productiva.
+
+Resultado real:
+
+orchestrator_present: trueskill_present: trueroute_valid: trueactivation_guarded: trueactivated_at: null
+
+Evidencia:
+
+execution_task_id: a49c15e5-8275-4804-96b9-aab4b15f8119runtime_event_id: 2832fe16-6a79-414f-9e5d-bd2d6c76bf1d
+
+Estado:
+
+OK
+
+Comandos o SQL útiles para repetir/verificar
+
+Ver estado final del deployment job
+
+select
+  dj.id as deployment_job_id,
+  dj.status as deployment_status,
+  dj.blocking_reason,
+  dj.pending_configs,
+  ar.automation_key,
+  ar.status as automation_status,
+  ar.health_status,
+  ar.activation_guarded,
+  ar.activated_at,
+  (select count(*) from public.runtime_events re where re.automation_key = ar.automation_key) as runtime_event_count,
+  (select count(*) from public.execution_tasks et where et.deployment_job_id = dj.id) as execution_task_count,
+  (select count(*) from public.deployment_logs dl where dl.deployment_job_id = dj.id) as deployment_log_count
+from public.deployment_jobs dj
+join public.automation_registry ar on ar.id = dj.automation_id
+where dj.id = '8d9d3648-8b25-42a8-a3c2-1a9aa60c816b';
+Resultado esperado:
+
+deployment_status = validation_only_passed_guarded
+automation_status = scaffolded
+health_status = pending_validation
+activation_guarded = true
+activated_at = null
+runtime_event_count = 1
+execution_task_count = 1
+deployment_log_count = 5
+
+Ver inventario técnico
+select automation_key, agent_key, agent_name, agent_type, runtime_function, status, skills, required_configs
+from public.agent_registry
+where automation_key = 'validation-shared-runtime-002';
+
+select automation_key, skill_key, skill_name, skill_source_path, skill_version, runtime_location, runtime_bucket, runtime_package_path, status, required_configs
+from public.skill_registry
+where automation_key = 'validation-shared-runtime-002';
+
+select automation_key, rule_key, rule_type, rule_version, rule_source_path, rule_config, status
+from public.automation_rules
+where automation_key = 'validation-shared-runtime-002'
+  and rule_key = 'default-runtime-route';
+Ver validation-only evidence
+select id, deployment_job_id, automation_key, task_type, task_status, status, phase, agent_name, output_payload, created_at
+from public.execution_tasks
+where id = 'a49c15e5-8275-4804-96b9-aab4b15f8119';
+
+select id, automation_id, execution_task_id, automation_key, event_type, event_payload, created_at
+from public.runtime_events
+where id = '2832fe16-6a79-414f-9e5d-bd2d6c76bf1d';
+Ver Edge Function nueva
+supabase functions list --project-ref lwurzjrghzwzxbhrulyn
+Buscar:
+
+runtime-validation-only
+status: ACTIVE
+verify_jwt: true
+
+Próximo SQL recomendado para Bloque 7
+No ejecutar si se desea revisar antes.
+
+Este cambio es no productivo:
+
+update public.automation_registry
+set
+  status = 'ready_for_controlled_activation',
+  health_status = 'validation_only_passed',
+  activation_guarded = true,
+  updated_at = now(),
+  metadata = coalesce(metadata, '{}'::jsonb) || jsonb_build_object(
+    'phase_3_guarded_close_ready', true,
+    'validation_only_passed_at', now(),
+    'deployment_job_id', '8d9d3648-8b25-42a8-a3c2-1a9aa60c816b',
+    'runtime_validation_only_function', 'runtime-validation-only',
+    'production_activation', 'not_performed'
+  )
+where id = '3bd46a6d-fcdb-4a15-86c9-1dfc1c443535'
+  and automation_key = 'validation-shared-runtime-002'
+  and activation_guarded = true
+  and activated_at is null
+returning id, automation_key, status, health_status, activation_guarded, activated_at, updated_at;
+Importante:
+
+Este SQL no activa producción.
+No cambia activation_guarded a false.
+No escribe activated_at.
+
+Próximo bloque recomendado
+Bloque 7 — Cierre de Fase 3 guardada
+
+Pasos exactos:
+
+Revisar estado actual del deployment job 8d9d3648-8b25-42a8-a3c2-1a9aa60c816b.
+
+Confirmar que deployment_status = validation_only_passed_guarded.
+
+Confirmar que activation_guarded = true y activated_at = null.
+
+Actualizar automation_registry:
+
+status = ready_for_controlled_activation
+
+health_status = validation_only_passed
+
+conservar activation_guarded = true
+
+conservar activated_at = null
+
+Insertar deployment_log de cierre Fase 3 guardada.
+
+Insertar phase_event opcional:
+
+event_type = deployment.validation_only_passed_guarded
+
+from_status = pending_validation
+
+to_status = ready_for_controlled_activation
+
+Verificar resultado final.
+
+No activar producción.
+
+Criterio de éxito:
+
+automation_registry.status = ready_for_controlled_activation
+automation_registry.health_status = validation_only_passed
+activation_guarded = true
+activated_at = null
+deployment_jobs.status = validation_only_passed_guarded
+
+No hacer en la siguiente ventana
+No hacer:
+
+No cambiar activation_guarded=false.
+
+No cambiar automation_registry.status a active.
+
+No escribir activated_at.
+
+No ejecutar runtime-router productivo sin autorización explícita.
+
+No ejecutar skill-executor productivo sin autorización explícita.
+
+No llamar OpenRouter para pruebas si no está aprobado.
+
+No leer ni imprimir OPENROUTER_API_KEY.
+
+No leer ni imprimir SUPABASE_SERVICE_ROLE_KEY.
+
+No desactivar verify_jwt en runtime-router, skill-executor o create-shared-automation.
+
+No borrar registros de evidencia.
+
+No repetir materialización de inventario si ya existe.
+
+No crear otro deployment_job duplicado.
+
+No asumir que validation_only_passed_guarded equivale a producción activa.
+
+No hacer reset hard de Git local sin confirmación del usuario.
+
+No tocar Storage como si fuera obligatorio para validation-only.
+
+No modificar RLS productivo sin autorización explícita.
+
+Estado de cierre actual
+[OK] Protocolo principal identificado.
+[OK] Fase 2 scaffold registrado.
+[OK] Automation validation-shared-runtime-002 trazada a protocolo/proyecto/witness.
+[OK] Deployment job creado.
+[OK] Inventario mínimo registrado: orchestrator + intake-analysis.
+[OK] Routing default-runtime-route corregido.
+[OK] Config OPENROUTER_API_KEY registrada como managed_in_supabase_secrets.
+[OK] Runtime real bloqueado correctamente por activación requerida.
+[OK] runtime-validation-only desplegado y activo.
+[OK] Validation-only pasó con activation_guarded=true.
+[OK] deployment_jobs.status = validation_only_passed_guarded.
+[PENDIENTE] automation_registry.health_status todavía = pending_validation.
+[PENDIENTE] automation_registry.status todavía = scaffolded.
+[PENDIENTE] runtime real no ejecutado.
+[PENDIENTE] Storage runtime package no confirmado.
+[NO HACER] Activación productiva sin autorización explícita.
+
+Resumen para pegar a la siguiente IA
+Continuar proyecto Skills Swarm / Automation Protocol en Fase 3 guardada, no productiva.
+
+Estado actual:
+
+project_ref Supabase: lwurzjrghzwzxbhrulyn
+
+automation_key: validation-shared-runtime-002
+
+automation_id: 3bd46a6d-fcdb-4a15-86c9-1dfc1c443535
+
+protocol_id: 68855189-fddf-4b12-b0c9-eb5d9b83234a
+
+scaffold_job_id: 109d9a59-854e-46bd-a11c-9b055667745c
+
+deployment_job_id: 8d9d3648-8b25-42a8-a3c2-1a9aa60c816b
+
+Fase 2 ya quedó registrada con scaffold_files, scaffold_artifacts y validation_report.
+Fase 3 ya tiene deployment_job y validation-only aprobado.
+Inventario mínimo existe: agent orchestrator, skill intake-analysis, rule default-runtime-route.
+runtime-validation-only está ACTIVE con verify_jwt=true.
+deployment_jobs.status = validation_only_passed_guarded.
+automation_registry.status = scaffolded.
+automation_registry.health_status = pending_validation.
+activation_guarded = true.
+activated_at = null.
+
+Siguiente tarea exacta:
+Ejecutar Bloque 7: cerrar Fase 3 guardada actualizando automation_registry a:
+status = ready_for_controlled_activation
+health_status = validation_only_passed
+sin tocar activation_guarded
+sin escribir activated_at
+sin activar producción.
+
+Restricciones:
+No cambiar activation_guarded=false.
+No poner status=active.
+No ejecutar runtime-router ni skill-executor productivo.
+No exponer secrets.
+No crear deployment_job duplicado.
+No repetir inventario ya materializado.
+
+Cierre operativo
+La siguiente IA debe continuar desde Bloque 7 — Cierre de Fase 3 guardada, verificando el estado actual y actualizando únicamente el registry a ready_for_controlled_activation sin asumir producción activa.
+
+MODO DESARROLLADOR
+
+El menú de 1Password está disponible. Pulsa la fecha hacia abajo para seleccionar.
+2026-05-04 HH-MM - Handover Completo Siguiente IA
+Ruta oficial
+Ruta sugerida:
+
+handover/Registros_Historicos/2026/05-Mayo/2026-05-04_HH-MM_Fase_3_Validation_Only_Passed_Guarded.md
+El HH-MM debe reemplazarse por la hora real local al momento de guardar el archivo.
+
+Propósito
+Este handover reemplaza el contexto disperso de la sesión actual y deja documentado el avance desde Fase 2 hacia Fase 3 del proyecto Skills Swarm / Automation Protocol.
+
+Cubre:
+
+1. Cierre operativo de Fase 2 con scaffold registrado.
+2. Creación y trazabilidad del deployment job de Fase 3.
+3. Detección de inventario técnico incompleto.
+4. Materialización controlada del inventario mínimo.
+5. Bloqueo correcto de validación runtime real por activación requerida.
+6. Creación de endpoint no productivo runtime-validation-only.
+7. Validación no productiva aprobada con activation_guarded=true.
+Sirve para que la siguiente IA continúe sin repetir auditorías ya hechas, sin intentar activar producción y sin asumir que la automatización está activa.
+
+Regla de idioma
+assistant_response_language = español
+technical_file_language = mantener idioma existente salvo instrucción contraria
+Lectura obligatoria para la siguiente IA
+Antes de tocar algo, revisar:
+
+1. README.md
+2. Skills Swarm Automation Pipeline.md
+3. Base_de_Conocimiento_PowerShell_Supabase_Runtime.docx
+4. Prompt-Hand-Over.txt
+5. protocol.config.json
+6. MANIFEST.sha256.json
+Supabase, proyecto:
+
+project_ref: lwurzjrghzwzxbhrulyn
+Tablas críticas:
+
+public.automation_protocols
+public.scaffold_jobs
+public.scaffold_files
+public.scaffold_artifacts
+public.scaffold_validation_reports
+public.automation_registry
+public.agent_registry
+public.skill_registry
+public.automation_rules
+public.deployment_configs
+public.deployment_jobs
+public.deployment_logs
+public.execution_tasks
+public.runtime_events
+public.phase_events
+public.event_types
+Edge Functions críticas:
+
+runtime-router
+skill-executor
+create-shared-automation
+runtime-validation-only
+GitHub:
+
+repo: accesos-seo/automation-protocol
+branch local observada anteriormente: phase-3-runtime-hardening-runtime-patch
+branch remota principal: main
+Archivos GitHub usados como fuente autorizada para inventario shared runtime:
+
+automations/example-shared-automation/deployment/manifest.json
+automations/example-shared-automation/routing-rules/default-runtime-route.json
+Política de autonomía vigente
+El usuario autorizó trabajo por bloques con comandos como:
+
+go
+sí
+adelante
+continúa
+hazlo
+sigue
+ejecuta
+Interpretación vigente:
+
+Cuando el usuario diga "go", se puede avanzar al siguiente bloque planificado.
+Cada bloque debe tener objetivo cerrado, resultado verificable y no debe abrir tareas laterales.
+No hacer tareas por hacer.
+Actuar como arquitecto/organizador del plan, no como explorador sin rumbo.
+Acciones permitidas automáticamente dentro de un bloque aprobado
+Permitido dentro de un bloque aprobado por el usuario:
+
+1. SELECT y auditorías no destructivas.
+2. Revisión de Edge Functions.
+3. Revisión de tablas y esquemas.
+4. Inserción de logs, eventos y tareas de evidencia cuando correspondan.
+5. Fixes no destructivos y trazables.
+6. Registro de inventario técnico si existe fuente autorizada.
+7. Actualización de estados intermedios no productivos.
+8. Despliegue de función validation-only si no activa producción.
+9. Validaciones controladas sin exponer secretos.
+10. Documentación de resultados.
+Acciones que requieren parada o autorización explícita
+Detenerse y pedir autorización explícita antes de:
+
+1. DROP.
+2. TRUNCATE.
+3. Borrados masivos.
+4. Cambios RLS sensibles.
+5. Exponer secretos.
+6. Leer, imprimir o pegar service_role keys, tokens o claves reales.
+7. Cambiar activation_guarded=false.
+8. Activar producción.
+9. Cambiar automation_registry.status a active.
+10. Escribir activated_at.
+11. Crear costos externos.
+12. Llamar proveedores externos con costo si no estaba aprobado.
+13. Rotar secretos.
+14. Desactivar verify_jwt en funciones productivas.
+15. Ejecutar runtime productivo real.
+Arquitectura base recordada
+Residencia del sistema:
+
+GitHub = fuente técnica versionada
+Supabase DB = fuente operativa/runtime
+Supabase Edge Functions = ejecución runtime
+Supabase Storage = paquetes runtime/evidencia
+Supabase Secrets = secretos reales
+Local Windows = copia de trabajo/operador
+Regla de seguridad permanente:
+
+Los secretos reales viven en Supabase Secrets o backend controlado.
+No deben guardarse en PowerShell, frontend, documentación, tablas públicas ni GitHub.
+Pipeline del proyecto:
+
+Skills Swarm Form
+→ Fase 1 Intake / Specialist
+→ Fase 2 Constructor Scaffold
+→ Fase 3 Technical Deployer
+→ Automation Active
+Estado actual:
+
+No estamos en Automation Active.
+Estamos en Fase 3 validada en modo no productivo y guardado.
+Estado del repositorio / GitHub
+Repositorio:
+
+accesos-seo/automation-protocol
+Branch local observada durante la sesión del usuario:
+
+phase-3-runtime-hardening-runtime-patch
+Branch principal revisada:
+
+main
+Archivo eliminado previamente confirmado en GitHub:
+
+handover/Registros_Historicos/2026/05-Mayo/2026-05-04_00-24_Local_Test_Token_Fallback_Deployed.md
+Commit de eliminación confirmado previamente:
+
+2c4e963db6b1d83bc850c8e025fbd9aa5958f193
+Archivos usados como fuente autorizada para materializar inventario:
+
+automations/example-shared-automation/deployment/manifest.json
+automations/example-shared-automation/routing-rules/default-runtime-route.json
+No se realizó commit nuevo en GitHub durante el avance de Fase 3 de esta sesión. Los cambios aplicados fueron principalmente en Supabase DB y Supabase Edge Functions.
+
+Estado Supabase
+Proyecto Supabase:
+
+project_ref: lwurzjrghzwzxbhrulyn
+Protocolo principal:
+
+protocol_id: 68855189-fddf-4b12-b0c9-eb5d9b83234a
+project_id: b9236946-35f2-4b01-b0c9-05f7ff57c95c
+witness_id: 2bc941e8-de10-4000-a169-1304e0878703
+Estado del protocolo:
+
+automation_protocols.status = ready_for_scaffold
+specialist_decision = approve_interpretation
+handoff_ready_for_scaffold = true
+Scaffold job:
+
+scaffold_job_id: 109d9a59-854e-46bd-a11c-9b055667745c
+scaffold_job_status: scaffold_completed
+Automation objetivo:
+
+automation_id: 3bd46a6d-fcdb-4a15-86c9-1dfc1c443535
+automation_key: validation-shared-runtime-002
+automation_status: scaffolded
+health_status: pending_validation
+activation_guarded: true
+activated_at: null
+Deployment job:
+
+deployment_job_id: 8d9d3648-8b25-42a8-a3c2-1a9aa60c816b
+deployment_status: validation_only_passed_guarded
+blocking_reason: null
+pending_configs: []
+Inventario técnico final:
+
+agent_registry:
+- agent_key: orchestrator
+- automation_key: validation-shared-runtime-002
+- runtime_function: runtime-router
+
+skill_registry:
+- skill_key: intake-analysis
+- automation_key: validation-shared-runtime-002
+
+automation_rules:
+- rule_key: default-runtime-route
+- route.entry_agent = orchestrator
+- route.default_skill = intake-analysis
+- route.runtime_function = runtime-router
+- route.skill_executor_function = skill-executor
+- guards.activation_guarded = true
+- guards.controlled_activation_required = true
+Config requerida:
+
+OPENROUTER_API_KEY
+config_status = managed_in_supabase_secrets
+No se leyó ni expuso el valor real del secreto.
+
+Estado Storage / Skills / Runtime, si aplica
+Durante esta sesión no se modificaron objetos de Supabase Storage.
+
+Estado relevante conocido:
+
+skill_registry tiene skill intake-analysis registrada para validation-shared-runtime-002.
+runtime_location = github
+runtime_bucket = none
+runtime_package_path = null
+La validación no productiva se hizo contra estructura DB/routing/inventario, no contra paquete runtime en Storage.
+
+Storage queda como:
+
+PENDIENTE_DE_CONFIRMAR si existen paquetes runtime productivos asociados a validation-shared-runtime-002.
+Estado de Edge Functions, si aplica
+Funciones críticas existentes y activas:
+
+runtime-router: ACTIVE, verify_jwt=true
+skill-executor: ACTIVE, verify_jwt=true
+create-shared-automation: ACTIVE, verify_jwt=true
+Hallazgo importante:
+
+runtime-router exige automation_registry.status = active.
+skill-executor exige automation_registry.status = active.
+Por eso no se ejecutó runtime real, porque la automation sigue:
+
+status = scaffolded
+activation_guarded = true
+activated_at = null
+Función nueva desplegada:
+
+runtime-validation-only
+status: ACTIVE
+verify_jwt: true
+version: 1
+edge_function_id: 24d23f60-c97b-49da-9fd6-0b1bd405e91c
+ezbr_sha256: 46b9ae6232e60ec05f8d3e1600d103a2f1a07bb58d82e5fefcefa4de745d3bb6
+Propósito de runtime-validation-only:
+
+Validar estructura runtime sin exigir automation.status = active.
+No llama OpenRouter.
+No llama skill-executor productivo.
+No cambia activation_guarded.
+No activa producción.
+Evidencia creada durante la sesión
+Fase 2:
+
+scaffold_job_id: 109d9a59-854e-46bd-a11c-9b055667745c
+scaffold_files: 6
+scaffold_artifacts: 6
+scaffold_validation_reports: 1
+phase_event scaffold.completed: 1
+Fase 3 deployment:
+
+deployment_job_id: 8d9d3648-8b25-42a8-a3c2-1a9aa60c816b
+Inventario:
+
+agent_key: orchestrator
+skill_key: intake-analysis
+rule_key: default-runtime-route
+Validation-only:
+
+edge_function: runtime-validation-only
+execution_task_id: a49c15e5-8275-4804-96b9-aab4b15f8119
+runtime_event_id: 2832fe16-6a79-414f-9e5d-bd2d6c76bf1d
+deployment_log_id: 422d6226-c377-4fa7-afca-4de5031191ec
+Contadores finales verificados:
+
+runtime_event_count: 1
+execution_task_count: 1
+deployment_log_count: 5
+Estado final verificado:
+
+deployment_status: validation_only_passed_guarded
+automation_status: scaffolded
+health_status: pending_validation
+activation_guarded: true
+activated_at: null
+blocking_reason: null
+pending_configs: []
+Incidentes resueltos durante la sesión
+1. Fase 2 sin scaffold job ni artefactos
+Causa:
+
+El protocolo estaba aprobado para scaffold, pero no existían scaffold_jobs, scaffold_files, scaffold_artifacts ni scaffold_validation_reports asociados.
+Fix aplicado:
+
+Se creó scaffold_job controlado.
+Se registraron 6 scaffold_files.
+Se registraron 6 scaffold_artifacts.
+Se creó 1 scaffold_validation_report.
+Se creó evento scaffold.completed.
+Resultado:
+
+scaffold_job_status = scaffold_completed
+2. Automation sin trazabilidad hacia protocolo/scaffold
+Causa:
+
+validation-shared-runtime-002 existía en automation_registry pero tenía protocol_id, project_id y witness_id en null.
+Fix aplicado:
+
+Se enlazó validation-shared-runtime-002 con:
+protocol_id = 68855189-fddf-4b12-b0c9-eb5d9b83234a
+project_id = b9236946-35f2-4b01-b0c9-05f7ff57c95c
+witness_id = 2bc941e8-de10-4000-a169-1304e0878703
+Resultado:
+
+Trazabilidad mínima corregida.
+activation_guarded se mantuvo true.
+3. Fase 3 sin deployment job
+Causa:
+
+No existía deployment_job para validation-shared-runtime-002.
+Fix aplicado:
+
+Se creó deployment_job en modo controlado.
+deployment_job_id = 8d9d3648-8b25-42a8-a3c2-1a9aa60c816b
+Resultado inicial:
+
+deploy_queued
+4. Inventario técnico incompleto
+Causa:
+
+validation-shared-runtime-002 no tenía agentes ni skills propios.
+automation_rules.default-runtime-route tenía default_skill_key inválido: "=".
+Fix aplicado:
+
+Se usó fuente autorizada example-shared-automation.
+Se registró agente orchestrator.
+Se registró skill intake-analysis.
+Se corrigió default-runtime-route.
+Resultado:
+
+deployment_job pasó a deploy_ready_for_validation.
+5. Runtime real bloqueado por activación requerida
+Causa:
+
+runtime-router y skill-executor exigen automation_registry.status = active.
+validation-shared-runtime-002 sigue en status = scaffolded.
+Decisión:
+
+No se cambió status a active.
+No se activó producción.
+Se registró bloqueo correcto: runtime_validation_blocked_activation_required.
+6. Necesidad de validación no productiva
+Causa:
+
+Se necesitaba validar estructura runtime sin activar producción.
+Fix aplicado:
+
+Se desplegó runtime-validation-only con verify_jwt=true.
+Se ejecutó validación equivalente por SQL.
+Se registró execution_task, runtime_event y deployment_log.
+Resultado:
+
+deployment_status = validation_only_passed_guarded
+Incidentes pendientes
+1. Health status aún no refleja validación guardada
+Estado actual:
+
+automation_registry.health_status = pending_validation
+deployment_jobs.status = validation_only_passed_guarded
+Causa probable:
+
+Se cerró la validación en deployment_jobs, pero aún no se actualizó automation_registry.health_status.
+Impacto:
+
+La automation está validada en modo no productivo, pero el registry todavía no refleja ese estado.
+Próximo paso exacto:
+
+Actualizar automation_registry.health_status a validation_only_passed y status a ready_for_controlled_activation, sin activar producción.
+No tocar:
+
+activation_guarded
+activated_at
+status active
+2. Runtime real no ejecutado
+Estado:
+
+runtime real no ejecutado.
+runtime_event_count real productivo: 0
+runtime_event_count validation-only: 1
+Causa:
+
+runtime-router y skill-executor requieren automation.status=active.
+Impacto:
+
+La validación estructural está aprobada, pero la ejecución runtime productiva/controlada aún no fue realizada.
+Próximo paso exacto:
+
+Esperar autorización explícita para activación controlada o diseñar flujo temporal de active controlado con rollback.
+3. Storage runtime package no confirmado
+Estado:
+
+runtime_package_path = null para intake-analysis en validation-shared-runtime-002.
+Impacto:
+
+La validación actual no depende de Storage, pero una ejecución runtime real podría requerir revisar paquetes o ruta runtime definitiva.
+Próximo paso exacto:
+
+Antes de activación real, verificar si se necesita paquete en Supabase Storage o si el runtime usará GitHub como fuente.
+Resultado de pruebas ejecutadas
+Prueba 1 — Auditoría Fase 2
+Resultado esperado:
+
+Protocolo listo para scaffold y scaffold job existente.
+Resultado real inicial:
+
+scaffold_jobs: 0
+scaffold_files: 0
+scaffold_artifacts: 0
+scaffold_validation_reports: 0
+phase_events: 1
+Estado:
+
+Parcial inicial, luego reparado.
+Prueba 2 — Reparación Fase 2
+Resultado esperado:
+
+scaffold_job y artefactos mínimos existentes.
+Resultado real:
+
+scaffold_job_id: 109d9a59-854e-46bd-a11c-9b055667745c
+scaffold_files: 6
+scaffold_artifacts: 6
+validation_reports: 1
+scaffold_completed_events: 1
+Estado:
+
+OK
+Prueba 3 — Auditoría inventario Fase 3
+Resultado esperado:
+
+Agente, skill, config y routing presentes.
+Resultado real inicial:
+
+agent_registry: 0
+skill_registry: 0
+deployment_configs: 1
+automation_rules: 1
+default_skill_key inválido: "="
+Estado:
+
+Falló inicialmente, luego reparado.
+Prueba 4 — Materialización inventario
+Resultado esperado:
+
+orchestrator, intake-analysis y default-runtime-route válidos.
+Resultado real:
+
+agent_count: 1
+skill_count: 1
+route_count: 1
+blocking_reason: null
+pending_configs: []
+Estado:
+
+OK
+Prueba 5 — Auditoría runtime real
+Resultado esperado:
+
+Confirmar si runtime-router y skill-executor pueden ejecutarse sin activar automation.
+Resultado real:
+
+runtime-router exige automation.status = active
+skill-executor exige automation.status = active
+automation.status = scaffolded
+Estado:
+
+Bloqueado correctamente por activación requerida.
+Prueba 6 — Validation-only
+Resultado esperado:
+
+Validar estructura runtime sin activación productiva.
+Resultado real:
+
+orchestrator_present: true
+skill_present: true
+route_valid: true
+activation_guarded: true
+activated_at: null
+Evidencia:
+
+execution_task_id: a49c15e5-8275-4804-96b9-aab4b15f8119
+runtime_event_id: 2832fe16-6a79-414f-9e5d-bd2d6c76bf1d
+Estado:
+
+OK
+Comandos o SQL útiles para repetir/verificar
+Ver estado final del deployment job
+select
+  dj.id as deployment_job_id,
+  dj.status as deployment_status,
+  dj.blocking_reason,
+  dj.pending_configs,
+  ar.automation_key,
+  ar.status as automation_status,
+  ar.health_status,
+  ar.activation_guarded,
+  ar.activated_at,
+  (select count(*) from public.runtime_events re where re.automation_key = ar.automation_key) as runtime_event_count,
+  (select count(*) from public.execution_tasks et where et.deployment_job_id = dj.id) as execution_task_count,
+  (select count(*) from public.deployment_logs dl where dl.deployment_job_id = dj.id) as deployment_log_count
+from public.deployment_jobs dj
+join public.automation_registry ar on ar.id = dj.automation_id
+where dj.id = '8d9d3648-8b25-42a8-a3c2-1a9aa60c816b';
+Resultado esperado:
+
+deployment_status = validation_only_passed_guarded
+automation_status = scaffolded
+health_status = pending_validation
+activation_guarded = true
+activated_at = null
+runtime_event_count = 1
+execution_task_count = 1
+deployment_log_count = 5
+Ver inventario técnico
+select automation_key, agent_key, agent_name, agent_type, runtime_function, status, skills, required_configs
+from public.agent_registry
+where automation_key = 'validation-shared-runtime-002';
+
+select automation_key, skill_key, skill_name, skill_source_path, skill_version, runtime_location, runtime_bucket, runtime_package_path, status, required_configs
+from public.skill_registry
+where automation_key = 'validation-shared-runtime-002';
+
+select automation_key, rule_key, rule_type, rule_version, rule_source_path, rule_config, status
+from public.automation_rules
+where automation_key = 'validation-shared-runtime-002'
+  and rule_key = 'default-runtime-route';
+Ver validation-only evidence
+select id, deployment_job_id, automation_key, task_type, task_status, status, phase, agent_name, output_payload, created_at
+from public.execution_tasks
+where id = 'a49c15e5-8275-4804-96b9-aab4b15f8119';
+
+select id, automation_id, execution_task_id, automation_key, event_type, event_payload, created_at
+from public.runtime_events
+where id = '2832fe16-6a79-414f-9e5d-bd2d6c76bf1d';
+Ver Edge Function nueva
+Supabase Edge Function:
+runtime-validation-only
+status: ACTIVE
+verify_jwt: true
+Desde Supabase CLI, si aplica:
+
+supabase functions list --project-ref lwurzjrghzwzxbhrulyn
+Próximo SQL recomendado para Bloque 7
+No ejecutar si se desea revisar antes, pero este es el cambio no productivo previsto:
+
+update public.automation_registry
+set
+  status = 'ready_for_controlled_activation',
+  health_status = 'validation_only_passed',
+  activation_guarded = true,
+  updated_at = now(),
+  metadata = coalesce(metadata, '{}'::jsonb) || jsonb_build_object(
+    'phase_3_guarded_close_ready', true,
+    'validation_only_passed_at', now(),
+    'deployment_job_id', '8d9d3648-8b25-42a8-a3c2-1a9aa60c816b',
+    'runtime_validation_only_function', 'runtime-validation-only',
+    'production_activation', 'not_performed'
+  )
+where id = '3bd46a6d-fcdb-4a15-86c9-1dfc1c443535'
+  and automation_key = 'validation-shared-runtime-002'
+  and activation_guarded = true
+  and activated_at is null
+returning id, automation_key, status, health_status, activation_guarded, activated_at, updated_at;
+Importante:
+
+Este SQL no activa producción.
+No cambia activation_guarded a false.
+No escribe activated_at.
+Próximo bloque recomendado
+Bloque 7 — Cierre de Fase 3 guardada
+Pasos exactos:
+
+1. Revisar estado actual del deployment job 8d9d3648-8b25-42a8-a3c2-1a9aa60c816b.
+2. Confirmar que deployment_status = validation_only_passed_guarded.
+3. Confirmar que activation_guarded = true y activated_at = null.
+4. Actualizar automation_registry:
+   - status = ready_for_controlled_activation
+   - health_status = validation_only_passed
+   - conservar activation_guarded = true
+   - conservar activated_at = null
+5. Insertar deployment_log de cierre Fase 3 guardada.
+6. Insertar phase_event opcional:
+   - event_type = deployment.validation_only_passed_guarded
+   - from_status = pending_validation
+   - to_status = ready_for_controlled_activation
+7. Verificar resultado final.
+8. No activar producción.
+Criterio de éxito:
+
+automation_registry.status = ready_for_controlled_activation
+automation_registry.health_status = validation_only_passed
+activation_guarded = true
+activated_at = null
+deployment_jobs.status = validation_only_passed_guarded
+No hacer en la siguiente ventana
+No hacer:
+
+1. No cambiar activation_guarded=false.
+2. No cambiar automation_registry.status a active.
+3. No escribir activated_at.
+4. No ejecutar runtime-router productivo sin autorización explícita.
+5. No ejecutar skill-executor productivo sin autorización explícita.
+6. No llamar OpenRouter para pruebas si no está aprobado.
+7. No leer ni imprimir OPENROUTER_API_KEY.
+8. No leer ni imprimir SUPABASE_SERVICE_ROLE_KEY.
+9. No desactivar verify_jwt en runtime-router, skill-executor o create-shared-automation.
+10. No borrar registros de evidencia.
+11. No repetir materialización de inventario si ya existe.
+12. No crear otro deployment_job duplicado.
+13. No asumir que validation_only_passed_guarded equivale a producción activa.
+14. No hacer reset hard de Git local sin confirmación del usuario.
+Estado de cierre actual
+[OK] Protocolo principal identificado.
+[OK] Fase 2 scaffold registrado.
+[OK] Automation validation-shared-runtime-002 trazada a protocolo/proyecto/witness.
+[OK] Deployment job creado.
+[OK] Inventario mínimo registrado: orchestrator + intake-analysis.
+[OK] Routing default-runtime-route corregido.
+[OK] Edge Functions runtime-router, skill-executor y create-shared-automation activas con verify_jwt=true.
+[OK] Runtime real bloqueado correctamente por activation requirement.
+[OK] Edge Function runtime-validation-only desplegada con verify_jwt=true.
+[OK] Validation-only aprobada.
+[OK] Evidence registrada en execution_tasks, runtime_events y deployment_logs.
+[OK] activation_guarded sigue true.
+[OK] activated_at sigue null.
+[PENDIENTE] Actualizar automation_registry.health_status a validation_only_passed.
+[PENDIENTE] Actualizar automation_registry.status a ready_for_controlled_activation.
+[PENDIENTE] Insertar log/evento final de cierre Fase 3 guardada.
+[PENDIENTE] Activación productiva real, solo con autorización explícita posterior.
+Valores clave:
+
+project_ref = lwurzjrghzwzxbhrulyn
+protocol_id = 68855189-fddf-4b12-b0c9-eb5d9b83234a
+project_id = b9236946-35f2-4b01-b0c9-05f7ff57c95c
+witness_id = 2bc941e8-de10-4000-a169-1304e0878703
+automation_id = 3bd46a6d-fcdb-4a15-86c9-1dfc1c443535
+automation_key = validation-shared-runtime-002
+scaffold_job_id = 109d9a59-854e-46bd-a11c-9b055667745c
+deployment_job_id = 8d9d3648-8b25-42a8-a3c2-1a9aa60c816b
+execution_task_id = a49c15e5-8275-4804-96b9-aab4b15f8119
+runtime_event_id = 2832fe16-6a79-414f-9e5d-bd2d6c76bf1d
+runtime_validation_only_function_id = 24d23f60-c97b-49da-9fd6-0b1bd405e91c
+Resumen para pegar a la siguiente IA
+Continuar proyecto Skills Swarm / Automation Protocol en Supabase project_ref lwurzjrghzwzxbhrulyn. Protocolo principal: 68855189-fddf-4b12-b0c9-eb5d9b83234a. Automation objetivo: validation-shared-runtime-002, automation_id 3bd46a6d-fcdb-4a15-86c9-1dfc1c443535. Fase 2 ya tiene scaffold_job 109d9a59-854e-46bd-a11c-9b055667745c en scaffold_completed. Fase 3 tiene deployment_job 8d9d3648-8b25-42a8-a3c2-1a9aa60c816b en validation_only_passed_guarded. Se materializó inventario mínimo desde example-shared-automation: agent orchestrator, skill intake-analysis, rule default-runtime-route válida. Se desplegó Edge Function runtime-validation-only ACTIVE verify_jwt=true. Evidencia: execution_task_id a49c15e5-8275-4804-96b9-aab4b15f8119 y runtime_event_id 2832fe16-6a79-414f-9e5d-bd2d6c76bf1d. No se activó producción: automation_status sigue scaffolded, activation_guarded=true, activated_at=null. Próximo bloque recomendado: cerrar Fase 3 guardada actualizando automation_registry.status=ready_for_controlled_activation y health_status=validation_only_passed, sin tocar activation_guarded ni activated_at. No cambiar a active, no ejecutar runtime productivo, no exponer secretos.
+Cierre operativo
+La siguiente IA debe continuar desde Bloque 7 — Cierre de Fase 3 guardada, actualizando el estado de registry para reflejar validation_only_passed_guarded, sin asumir que la automatización está activa y sin ejecutar producción.
+
