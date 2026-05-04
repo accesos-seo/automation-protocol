@@ -12,9 +12,6 @@ It calls the controlled local-test bridge and prints SQL verification queries to
 - Optional SUPABASE_AUTH_TOKEN if you later extend this script to call JWT-protected functions.
 #>
 
-Set-StrictMode -Version Latest
-$ErrorActionPreference = "Stop"
-
 param(
     [Parameter(Mandatory = $false)] [string] $AutomationKey = "validation-shared-runtime-001",
     [Parameter(Mandatory = $false)] [string] $AutomationName = "Validation Shared Runtime 001",
@@ -23,6 +20,9 @@ param(
     [Parameter(Mandatory = $false)] [string] $SupabaseUrl = $env:SUPABASE_URL,
     [Parameter(Mandatory = $false)] [string] $LocalTestToken = $env:LOCAL_TEST_TOKEN
 )
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
 
 if ([string]::IsNullOrWhiteSpace($SupabaseUrl)) { throw "SUPABASE_URL is required. Pass -SupabaseUrl or set environment variable." }
 if ([string]::IsNullOrWhiteSpace($LocalTestToken)) { throw "LOCAL_TEST_TOKEN is required. Pass -LocalTestToken or set environment variable." }
@@ -71,14 +71,14 @@ where automation_key = '$AutomationKey'
 order by created_at desc;
 
 -- Verify runtime events
-select automation_key, event_type, status, created_at
+select automation_key, event_type, event_payload, created_at
 from public.runtime_events
 where automation_key = '$AutomationKey'
 order by created_at desc
 limit 20;
 
 -- Verify execution tasks
-select automation_key, task_type, status, created_at, updated_at
+select automation_key, task_type, task_status, created_at, updated_at
 from public.execution_tasks
 where automation_key = '$AutomationKey'
 order by created_at desc
