@@ -73,6 +73,29 @@ docs/22-shared-automation-controlled-activation-checklist.md
 
 hasta que la automatización esté en `pending_final_validation`.
 
+## Si la tarea involucra WhatsApp, Meta o mensajes externos auditables
+
+Leer también:
+
+```text
+docs/27-whatsapp-meta-automation-pattern.md
+```
+
+Cargar este documento cuando la tarea mencione:
+
+```text
+WhatsApp
+Meta Cloud API
+webhook de Meta
+mensajes a leads
+notification_queue
+accepted / delivered / read / failed
+pg_cron + pg_net para envío
+cola de notificaciones
+```
+
+Este documento debe leerse antes de crear triggers, Edge Functions, cron jobs o tableros relacionados con WhatsApp/Meta, para evitar envíos directos sin cola, sin `provider_message_id` o sin webhook de estados.
+
 ## Si la tarea es validar un manifest
 
 Leer solo:
@@ -138,6 +161,12 @@ Leer solo la función afectada y, si aplica, su documento operativo:
 ```text
 supabase/functions/{function-name}/index.ts
 docs/18-shared-automation-build-pipeline.md
+```
+
+Si la función afectada envía WhatsApp o recibe webhooks de Meta, leer también:
+
+```text
+docs/27-whatsapp-meta-automation-pattern.md
 ```
 
 ## Si la tarea es revisar estado de una automatización

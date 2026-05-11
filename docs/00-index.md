@@ -22,6 +22,7 @@ ai_handover = built
 block_execution_procedure = built
 autonomous_action_allowlist = built
 example_shared_automation = registered_pending_final_validation
+whatsapp_meta_pattern = documented
 ```
 
 ## Lectura rápida
@@ -38,6 +39,12 @@ docs/26-ai-autonomous-action-allowlist.md
 docs/18-shared-automation-build-pipeline.md
 docs/19-shared-automation-operational-flow.md
 docs/20-shared-automation-powershell-operator-guide.md
+```
+
+Para automatizaciones de WhatsApp/Meta, leer adicionalmente:
+
+```text
+docs/27-whatsapp-meta-automation-pattern.md
 ```
 
 ## Política de autonomía IA
@@ -77,6 +84,12 @@ Leer en este orden:
 8. docs/23-shared-automation-handover-checklist.md
 9. automations/_template/README.md
 10. handover/_templates/AUTOMATION-HANDOVER.md
+```
+
+Si la automatización usa WhatsApp, Meta Cloud API o webhook de entrega, agregar:
+
+```text
+11. docs/27-whatsapp-meta-automation-pattern.md
 ```
 
 Scripts asociados:
@@ -198,6 +211,14 @@ docs/26-ai-autonomous-action-allowlist.md
 ```
 
 Define acciones automáticas que la IA debe ejecutar sin volver a preguntar dentro de un bloque aprobado.
+
+### 27 - WhatsApp Meta Automation Pattern
+
+```text
+docs/27-whatsapp-meta-automation-pattern.md
+```
+
+Define el patrón general para automatizaciones WhatsApp/Meta con cola auditable, `pg_cron`, `pg_net`, Edge Functions, webhook de estados, dashboard, deduplicación, hardening y migración desde implementaciones legacy de envío directo.
 
 ## Funciones Edge del pipeline compartido
 
